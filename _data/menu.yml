@@ -2,11 +2,6 @@
 # https://github.com/riggraz/no-style-please#customize-the-menu
 
 entries:
-  - title: posts
-    post_list: true
-    url: false
-    entries: false
-
   - title: about me
     url: false
     entries:
@@ -15,4 +10,15 @@ entries:
       - title: github
         url: https://github.com/litios
 
+  - title: NACTF
+    url: false
+    entries:
+      - title: Gopher
+        url: "/2020/11/06/gopher.html"
+      - title: Packed
+        url: "/2020/11/06/packed.html"
 
+  - title: posts
+    post_list: true
+    url: false
+    entries: false
