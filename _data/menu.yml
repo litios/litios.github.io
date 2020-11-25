@@ -10,6 +10,12 @@ entries:
       - title: github
         url: https://github.com/litios
 
+  - title: HTB x Uni CTF 2020 - Quals
+    url: false
+    entries:
+      - title: Mirror
+        url: "/2020/11/25/mirror.html"
+
   - title: NACTF
     url: false
     entries:
