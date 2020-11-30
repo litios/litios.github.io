@@ -16,6 +16,12 @@ entries:
 #      - title: Mirror
 #        url: "/2020/11/25/mirror.html"
 
+  - title: DEKRA CTF
+    url: false
+    entries:
+      - title: Mirror
+        url: "/2020/11/30/weird-chall.html"
+
   - title: NACTF
     url: false
     entries:
