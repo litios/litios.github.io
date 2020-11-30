@@ -19,7 +19,7 @@ entries:
   - title: DEKRA CTF
     url: false
     entries:
-      - title: Mirror
+      - title: Weird chall
         url: "/2020/11/30/weird-chall.html"
 
   - title: NACTF
