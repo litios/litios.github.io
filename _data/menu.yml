@@ -21,6 +21,8 @@ entries:
     entries:
       - title: Weird chall
         url: "/2020/11/30/weird-chall.html"
+      - title: Echopwn
+        url: "/2020/12/01/echopwn.html"
 
   - title: NACTF
     url: false
