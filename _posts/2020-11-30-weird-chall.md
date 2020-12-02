@@ -83,7 +83,7 @@ After that, a ton of seccomp rules.
 
 >I actually looked for each of the syscalls during the competition but when reading about seccomp I found this amazing tool called [seccomp-tools](https://github.com/david942j/seccomp-tools) that makes the work of analyzing seccomp rules so easy
 
-We execute seccomp-tools agains the binary and we get:
+We execute seccomp-tools against the binary and we get:
 
 ```bash
 Exploit me (it is an easy bof)... the flag is @ 0x7ffcb9cc44b0...
@@ -119,11 +119,11 @@ Last part, a simple **scanf**:
 
 ![](/./assets/imgs/weird-finalmain.png)
 
-It doesn't have limitations so **we can write as many bytes as we want**. Checking that `var_40h` we can see it is at `rbp - 0x40` so after writing 0x40 bytes we can make a buffer overflow.
+It doesn't have limitations so **we can write as many bytes as we want**. Checking `var_40h`, we can see it is at `rbp - 0x40` so after writing 0x40 bytes we can make a buffer overflow.
 
 ---
 
-We can also see that a jumper functions exists with this simple code:
+We can also see that a jumper function exists with this simple code:
 
 ![](/./assets/imgs/weird-jumper.png)
 
@@ -209,7 +209,7 @@ for i in range(10):
         p.clean()
 ```
 
-I'm going to use the famouse [defuse.ca](https://defuse.ca/online-x86-assembler.htm) to generate the bytes from the assembly
+I'm going to use the famous [defuse.ca](https://defuse.ca/online-x86-assembler.htm) to generate the bytes from the assembly
 
 ``` python
         shellcode = b"\x49\x83\xC5\x05" + b"\x41\x0f\xb6\x45"+ chr(i).encode() + b"\x3c" + chr(j).encode() + b"\x0f\x85\xf6\x11\x40\x00\x48\x31\xf6\x56\x6a\x03\x54\x5f\x6a\x23\x58\x0f\x05\xe9\xe4\x11\x40\x00"
