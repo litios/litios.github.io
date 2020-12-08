@@ -16,6 +16,21 @@ entries:
 #      - title: Mirror
 #        url: "/2020/11/25/mirror.html"
 
+
+  - title: DefCamp CTF
+    url: false
+    entries:
+      - title: Bazooka
+        url: "/2020/12/08/bazooka.html"
+      - title: Hunting into the wild
+        url: "/2020/12/08/hunting-into-the-wild.html"
+      - title: Modern login
+        url: "/2020/12/08/modern-login.html"
+      - title: Stripped Go
+        url: "/2020/12/08/stripped-go.html"
+      - title: Yopass Go
+        url: "/2020/12/08/yopass-go.html"
+
   - title: DEKRA CTF
     url: false
     entries:
