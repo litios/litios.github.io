@@ -49,7 +49,7 @@ Let's start with the markdown file:
 
 They told us that they are using their own stack to handle the return addresses of the calls so you can't make a buffer overflow and redirect the execution. They implemented to macros for the `call` and `ret` instructions:
 
-```assembly
+```
 %macro call 1
 ;; __stack_shadow[__stack_depth++] = return_address;
   mov ecx, [__stack_depth]
@@ -72,7 +72,7 @@ So it looks like the `__stack_depth` is storing how many inner calls have happen
 
 Okey, let's take a look at the .S file:
 
-```assembly
+```
 global _start
 section .text
 

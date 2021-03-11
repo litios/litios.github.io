@@ -10,14 +10,21 @@ entries:
       - title: github
         url: https://github.com/litios
 
-#  - title: HTB x Uni CTF 2020 - Quals
-#    url: false
-#    entries:
-#      - title: Mirror
-#        url: "/2020/11/25/mirror.html"
+
+  - title: Zer0pts 2021
+    url: false
+    entries:
+      - title: Not Beginner's Stack
+        url: "/2021/03/11/not-beginners-stack.html"
+
+  - title: HTB x Uni CTF 2020 - Quals
+    url: false
+    entries:
+      - title: Mirror
+        url: "/2020/11/25/mirror.html"
 
 
-  - title: DefCamp CTF
+  - title: DefCamp CTF 2020
     url: false
     entries:
       - title: Bazooka
@@ -31,7 +38,7 @@ entries:
       - title: Yopass Go
         url: "/2020/12/08/yopass-go.html"
 
-  - title: DEKRA CTF
+  - title: DEKRA CTF 2020
     url: false
     entries:
       - title: Weird chall
@@ -39,7 +46,7 @@ entries:
       - title: Echopwn
         url: "/2020/12/01/echopwn.html"
 
-  - title: NACTF
+  - title: NACTF 2020
     url: false
     entries:
       - title: Gopher
