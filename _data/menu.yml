@@ -9,7 +9,11 @@ entries:
         url: mailto:davidfg168@gmail.com
       - title: github
         url: https://github.com/litios
-
+  - title: Idek 2022
+    url: false
+    entries:
+      - title: Typop
+        url: "/2023/01/22/typop.html"
   - title: GrabCON 2021
     url: false
     entries:

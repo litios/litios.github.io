@@ -17,6 +17,15 @@ layout: front
   {% if site.theme_config.show_description == true %}
     <p>{{ site.description }}</p>
   {% endif %}
+  <span onClick="if (document.body.style.color != 'rgb(242, 242, 242)'){
+    document.body.style.color = '#f2f2f2'; document.body.style.backgroundColor = '#202324';
+    } else {
+    document.body.style.color = 'black'; document.body.style.backgroundColor = 'white';
+    }
+    " class="material-icons" style="
+        margin-left: 900px;
+        cursor: pointer;
+    ">visibility</span>
 </header>
 
 {% include menu_item.html collection=site.data.menu.entries %}
