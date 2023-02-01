@@ -9,6 +9,13 @@ entries:
         url: mailto:davidfg168@gmail.com
       - title: github
         url: https://github.com/litios
+
+  - title: CVEs
+    url: false
+    entries:
+      - title: CVE-2023-0341
+        url: "/2023/01/14/CVE-2023-0341.html"
+
   - title: Idek 2022
     url: false
     entries:
