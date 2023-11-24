@@ -15,6 +15,8 @@ entries:
     entries:
       - title: CVE-2023-0341
         url: "/2023/01/14/CVE-2023-0341.html"
+      - title: CVE-2023-43887
+        url: https://github.com/strukturag/libde265/issues/418
 
   - title: Idek 2022
     url: false
