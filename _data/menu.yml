@@ -18,10 +18,10 @@ entries:
       - title: CVE-2023-43887
         url: https://github.com/strukturag/libde265/issues/418
 
-  - title: Look mum, I'm the GitHub Runner
+  - title: CICD
     url: false
     entries:
-      - title: Typop
+      - title: Look mum, I'm the GitHub Runner
         url: "/2024/05/01/cicd.html"
   - title: Idek 2022
     url: false
