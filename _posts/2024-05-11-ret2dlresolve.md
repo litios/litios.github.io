@@ -1,6 +1,6 @@
 # A technical deep-dive into x86_64 Ret2dlResolve
 
-<pre style="font-size: 0.3rem; text-align: center">
+<pre style="font-size: 0.6rem; text-align: center">
                                                                                                                                
                           .   *.#@ **./@@  %                              (%*@  %, %..@ @                     
                         @% *.@..,,,,@@ .# %, .                      @. * #..,,,,....*/**%%                      
