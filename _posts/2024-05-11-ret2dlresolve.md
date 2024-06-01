@@ -226,9 +226,9 @@ _dl_fixup(link_map, index) {
     Elf64_Rel *rel_entry = JMPREL[index];
     Elf64_Sym *sym_entry = SYMTAB[rel_entry->getSymbol()];
     char *sym_name = STRTAB + sym_entry->st_name ;
-    void *symbol_address = _dl_fixup(link_map, sym_name);
-    // now call the resolved symbol
-    _dl_lookup_symbol_x(arg1, arg2...)
+    ...
+    void *symbol_address = _dl_lookup_symbol_x(sym_name, link_map, ...);
+    // now call the resolved symbol with the right args
 }
 ```
 
