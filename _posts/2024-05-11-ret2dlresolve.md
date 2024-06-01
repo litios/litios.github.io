@@ -138,7 +138,7 @@ Dump of assembler code for function gets@plt:
 
 3. Function `puts@plt` consists of:
 
-```
+```asm
 gef➤  disass 0x401050
 Dump of assembler code for function puts@plt:
    0x0000000000401050 <+0>: endbr64 
@@ -171,7 +171,7 @@ This structure contains two fields:
 > If curious, other relocation types can be found at: `/arch/x86/include/asm/elf.h` in the Linux kernel source code.
 
 We can conveniently retrieve those values with `readelf -r test`
-```
+```asm
 Relocation section '.rela.plt' at offset 0x500 contains
 
   Offset          Info           Type           Sym. Value    Sym. Name + Addend
@@ -189,7 +189,7 @@ and then inspecting the memory addresses.
 
 4. If we check the memory values of `r_offset` we can see:
 
-```
+```asm
 gef➤  x/2wx 0x404020
 0x404020 <gets@got.plt>: 0x00401040 0x00000000
 gef➤  x/2wx 0x404018
@@ -198,7 +198,7 @@ gef➤  x/2wx 0x404018
 
 And those point to:
 
-```
+```asm
 gef➤  x/3i 0x00401030
    0x401030: endbr64 
    0x401034: push   0x0
