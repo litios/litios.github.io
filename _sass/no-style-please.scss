@@ -32,6 +32,8 @@ body {
   min-height: 100%;
 }
 
+h1 { text-align: center; }
+
 h2, h3, h4, h5 { margin-top: 3rem; }
 
 hr { margin: 2rem 0; }
@@ -46,7 +48,7 @@ a {
   color: #f7bf23;
 }
 .w {
-  max-width: 1000px;
+  max-width: 70vw;
   margin: 0 auto;
   padding: 4rem 2rem;
 }
