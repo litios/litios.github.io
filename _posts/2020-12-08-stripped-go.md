@@ -1,3 +1,12 @@
+---
+layout: post
+title: Stripped Go
+date: 2020-12-08
+classes: wide
+tags:
+  - Userspace
+  - Exploitation
+--- 
 <pre style="font-size: 0.6rem; text-align: center">
                                                                                                 
                            @((%/(%%.#..&@&(****@(****//*,,                                      

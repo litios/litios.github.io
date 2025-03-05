@@ -1,6 +1,14 @@
-# A technical deep-dive into x86_64 Ret2dlResolve
+---
+layout: post
+title: A technical deep-dive into x86_64 Ret2dlResolve
+date: 2024-05-11
+classes: wide
+tags:
+  - Userspace
+  - Exploitation
+--- 
 
-<pre style="font-size: 0.6rem; text-align: center">
+<pre style="font-size: 0.9vw; text-align: center">
                                                                                                                                
                           .   *.#@ **./@@  %                              (%*@  %, %..@ @                     
                         @% *.@..,,,,@@ .# %, .                      @. * #..,,,,....*/**%%                      

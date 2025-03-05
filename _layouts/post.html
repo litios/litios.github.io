@@ -2,15 +2,20 @@
 layout: default
 ---
 
-<a href="{{ site.url }}">{{ site.theme_config.back_home_text }}</a>
+<div style="display: flex; justify-content: space-between;">
+<a style="font-size: 2em;" href="{{ site.url }}">{{ site.theme_config.back_home_text }}</a>
 <span onClick="if (document.body.style.color != 'rgb(242, 242, 242)'){
 document.body.style.color = '#f2f2f2'; document.body.style.backgroundColor = '#202324';
 } else {
 document.body.style.color = 'black'; document.body.style.backgroundColor = 'white';
 }
 " class="material-icons" style="
-    margin-left: 66vw;
     cursor: pointer;
+    display:flex;
+    flex-direction:column;
+    justify-content:end;
+    align-items:center;
 ">visibility</span>
+</div>
 <br><br><br>
 {{ content }}

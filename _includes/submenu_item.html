@@ -1,0 +1,17 @@
+{% for item in include.collection %}
+{% if item.url != false %}
+  <a style="margin-left: 2%" href="{{ item.url }}">{{ item.title }}</a>
+{% else %}
+<p style="margin: 1% 0 1% 1.5%; font-weight: bold;">
+  {{ item.title }}
+</p>
+{% endif %}
+
+{% if item.post_list == true %}
+  {% include post_list.html %}
+{% endif %}
+
+{% if item.entries != blank %}        
+  {% include submenu_item.html collection=item.entries %}
+{% endif %}
+{% endfor %}

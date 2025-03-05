@@ -1,4 +1,13 @@
-<pre style="font-size: 0.4rem; text-align: center"> 
+---
+layout: post
+title: Not beginners stack
+date: 2021-03-11
+classes: wide
+tags:
+  - Userspace
+  - Exploitation
+--- 
+<pre style="font-size: 0.5vw; text-align: center"> 
                                     WNKKKNW                                     
                                  WXxc'...':d0NW                                 
                               W0d:..'cxxdl,..'cx0N                              

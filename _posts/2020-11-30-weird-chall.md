@@ -1,3 +1,12 @@
+---
+layout: post
+title: Weird chall
+date: 2020-11-30
+classes: wide
+tags:
+  - Userspace
+  - Exploitation
+--- 
 <pre style="font-size: 0.6rem; text-align: center"> 
                                    ..                         ..                                    
                                   $$$$                       $$$$                                   

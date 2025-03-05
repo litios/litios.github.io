@@ -1,4 +1,13 @@
-<pre style="font-size: 0.4rem; text-align: center">
+---
+layout: post
+title: Hunting into the wild
+date: 2020-12-08
+classes: wide
+tags:
+  - Userspace
+  - Exploitation
+--- 
+<pre style="font-size: 0.5vw; text-align: center">
                                            ,,,,,                                
                                ,,,,,,,,,,,,,,,,,,,,,,,,,,,,,                   
                          ,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,              

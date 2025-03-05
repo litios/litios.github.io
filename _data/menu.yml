@@ -1,88 +1,68 @@
-# For documentation on this file, see:
-# https://github.com/riggraz/no-style-please#customize-the-menu
-
 entries:
-  - title: about me
-    url: false
-    entries:
-      - title: email
-        url: mailto:davidfg168@gmail.com
-      - title: github
-        url: https://github.com/litios
-
-  - title: CVEs
-    url: false
-    entries:
+  cves:
       - title: CVE-2023-0341
         url: "/2023/01/14/CVE-2023-0341.html"
       - title: CVE-2023-43887
         url: https://github.com/strukturag/libde265/issues/418
-  - title: Security research
-    url: false
-    entries:
+
+  research:
       - title: A technical deep-dive into x86_64 Ret2dlResolve
         url: "/2024/05/11/ret2dlresolve.html"
       - title: Look mum, I'm the GitHub Runner
         url: "/2024/05/01/cicd.html"
-  - title: CTF Writeups
-    url: false
-    entries:
-      - title: Idek 2022
-        url: false
-        entries:
-          - title: Typop
-            url: "/2023/01/22/typop.html"
-      - title: GrabCON 2021
-        url: false
-        entries:
-          - title: Rusty
-            url: "/2021/09/06/rusty.html"
-      - title: Cyber Apocalypse 2021
-        url: false
-        entries:
-          - title: System dROP
-            url: "/2021/04/25/system-drop.html"
-      - title: Zer0pts 2021
-        url: false
-        entries:
-          - title: Not Beginner's Stack
-            url: "/2021/03/11/not-beginners-stack.html"
-      - title: HTB x Uni CTF 2020 - Quals
-        url: false
-        entries:
-          - title: Mirror
-            url: "/2020/11/25/mirror.html"
-      - title: DefCamp CTF 2020
-        url: false
-        entries:
-          - title: Bazooka
-            url: "/2020/12/08/bazooka.html"
-          - title: Hunting into the wild
-            url: "/2020/12/08/hunting-into-the-wild.html"
-          - title: Modern login
-            url: "/2020/12/08/modern-login.html"
-          - title: Stripped Go
-            url: "/2020/12/08/stripped-go.html"
-          - title: Yopass Go
-            url: "/2020/12/08/yopass-go.html"
+  ctfs:
+    - title: Idek 2022
+      url: false
+      entries:
+        - title: Typop
+          url: "/2023/01/22/typop.html"
+    - title: GrabCON 2021
+      url: false
+      entries:
+        - title: Rusty
+          url: "/2021/09/06/rusty.html"
+    - title: Cyber Apocalypse 2021
+      url: false
+      entries:
+        - title: System dROP
+          url: "/2021/04/25/system-drop.html"
+    - title: Zer0pts 2021
+      url: false
+      entries:
+        - title: Not Beginner's Stack
+          url: "/2021/03/11/not-beginners-stack.html"
+    - title: HTB x Uni CTF 2020 - Quals
+      url: false
+      entries:
+        - title: Mirror
+          url: "/2020/11/25/mirror.html"
+    - title: DefCamp CTF 2020
+      url: false
+      entries:
+        - title: Bazooka
+          url: "/2020/12/08/bazooka.html"
+        - title: Hunting into the wild
+          url: "/2020/12/08/hunting-into-the-wild.html"
+        - title: Modern login
+          url: "/2020/12/08/modern-login.html"
+        - title: Stripped Go
+          url: "/2020/12/08/stripped-go.html"
+        - title: Yopass Go
+          url: "/2020/12/08/yopass-go.html"
 
-      - title: DEKRA CTF 2020
-        url: false
-        entries:
-          - title: Weird chall
-            url: "/2020/11/30/weird-chall.html"
-          - title: Echopwn
-            url: "/2020/12/01/echopwn.html"
+    - title: DEKRA CTF 2020
+      url: false
+      entries:
+        - title: Weird chall
+          url: "/2020/11/30/weird-chall.html"
+        - title: Echopwn
+          url: "/2020/12/01/echopwn.html"
 
-      - title: NACTF 2020
-        url: false
-        entries:
-          - title: Gopher
-            url: "/2020/11/06/gopher.html"
-          - title: Packed
-            url: "/2020/11/06/packed.html"
+    - title: NACTF 2020
+      url: false
+      entries:
+        - title: Gopher
+          url: "/2020/11/06/gopher.html"
+        - title: Packed
+          url: "/2020/11/06/packed.html"
 
-  - title: posts
-    post_list: true
-    url: false
-    entries: false
