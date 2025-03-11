@@ -1,5 +1,7 @@
 entries:
   cves:
+      - title: CVE-2024-46738
+        url: https://lore.kernel.org/linux-cve-announce/2024091833-CVE-2024-46738-d871@gregkh/T/
       - title: CVE-2023-0341
         url: "/2023/01/14/CVE-2023-0341.html"
       - title: CVE-2023-43887
