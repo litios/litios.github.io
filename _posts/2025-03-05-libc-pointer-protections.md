@@ -189,58 +189,68 @@ Note that `0x0000000555555559` is both in fastbins list and tcachebins list, as 
 > If you noticed that in my program the last chunk went to fastbins instead of the tcache for 0x20 (since the max amount is 7), this is because you can influence tcache parameters at run time like this one, with GLIBC_TUNABLES (remember CVE-2023-4911? ;) 
 > For this particular case, I used: `export GLIBC_TUNABLES=glibc.malloc.tcache_count=2`
 
-Now, what if we cannot retrieve the special 0 case? Do not worry, as it is not much a problem either.
+Now, what if we cannot retrieve the special 0 case? Do not worry, it is not much a problem either, as long as we know how far the address is from the actual pointer.
 
-Let's get the case from before, `0x55500000cf99` that we know points to `0x555555559ac0`.
+Let's use a different case, now with ASLR enabled:
+
+```c
+0x5ceaf258aac0	0x00000005ceaf258a	0x7045b85a9fba521d	.%.......R..Z.Ep	 <-- tcachebins[0x20][1/2]
+0x5ceaf258aad0	0x0000000000000000	0x0000000000000021	........!.......
+0x5ceaf258aae0	0x00005cef3cf78f4a	0x7045b85a9fba521d	J..<.\...R..Z.Ep	 <-- tcachebins[0x20][0/2]
+0x5ceaf258aaf0	0x0000000000000000	0x0000000000020511	................	 <-- Top chunk
+```
+
+Let's see if we can crack `0x00005cef3cf78f4a`. If we know the offset, we know that the value (next chunk address) is the same as the address where the value is stored - 0x20 (`0x5ceaf258aae0 - 0x20`)
 
 We know:
 
-* The top 3 values, due to the fact of the shift (>> 12), those are always the real values from the pointer value.
-* The next 3, we can figure out, as we know it will be the 3 values from before due to the shift: (NEXT_TOP_3 XOR TOP_3)
+* The address has the same amount of bytes as the protected one.
+* The top one and a half bytes are the real ones.
 
-Now with `0x55500000cf99`:
+With this information, we can assume that, when we `REVEAL_PTR` the operation is as follows:
 
-* `0x555` -> Top 3 real values from the pointer value
-* `0x000` = `0x555` XOR `0x???` => `0x000` XOR `0x555` => `0x555`
+> I will use letters to better ilustrate the concept
 
-The remaining `0x00cf99` we need to bruteforce, but we only care about the shifted version, so only `0x00c`. 
+PTR_ADDRESS: 0xAAABBBCCCDDD
+VALUE:       0xAAABBBCCCDEE
 
-How do we bruteforce? Well, at this point, we will rely on the fact that we know how far the pointer address is from the actual address.
-If we can control the allocations and we know the size and where they are going to be in memory, we can offset one value with the other, so we only have one address to figure out.
+    |    AAABBBCCC|DDD
+    | AAABBBCCCDEE|
+XOR-|-------------|------
+      5cef3cf78f4a
 
-Even in the case we don't have full control of it, as long as we stay on the same page address, we will be able to extract it.
+The trick here is, since we know the first one and a half bytes, we can decipher the next one and a half, as we can reuse the previous ones we know to decypher it:
 
-This is an example with a Python script for the case above:
+`AAA` -> we know it is `0x5ce`
+`AAA XOR BBB = 0xf3c` => `0xf3c XOR AAA = BBB` => `0xf3c XOR 0x5ce` => `0xaf2`
+`BBB XOR CCC = 0xf78` => `0xaf2 XOR BBB = CCC` => `0xaf2 XOR 0xf78` => `0x58a`
+`CCC XOR DEE = 0xf4a` => `0x58a XOR CCC = DEE` => `0x58a XOR 0xf4a` => `0xac0`
+
+With `0x5ceaf258aac0` we would have enough, as we only need `0x5ceaf258a` to obfuscate any further pointers we want. Either way, we can compute the original address by adding the known offset, `0x20`.
+
+A quick python script to prove the point, so you can try too:
 
 ```python
-def find_value(result, offset, range_from, range_to):
-    for value in range(range_from, range_to, 0x10):  
-        value2 = value + offset
-        if (value >> 12) ^ value2 == result:
-            return value  
-    return None
+def decipher_values(value: int):
+    val_parts = [
+        (value >> 36) & 0xFFF,
+        (value >> 24) & 0xFFF,
+        (value >> 12) & 0xFFF,
+        value & 0xFFF
+    ]
+    
+    # Decipher using known values
+    part0 = val_parts[0]
+    part1 = val_parts[1] ^ part0
+    part2 = val_parts[2] ^ part1
+    part3 = val_parts[3] ^ part2
+    
+    return (part0 << 36) + (part1 << 24) + (part2 << 12) + part3
 
-# Example usage:
-RESULT = 0x55500000cf99  
-OFFSET = -0x20
+# Example usage
+result = decipher_values(0x00005cef3cf78f4a)
 
-MASK = RESULT >> (4 * 9)
-INPUT = (RESULT >> (4 * 6)) & 0x000fff
-TOP6 = (MASK << (4 * 9)) + ((MASK ^INPUT)<<(4*6))
-MAX = TOP6 + ((1 << (4 * 6)) - 1)
-
-print(f"Searching from 0x{TOP6:x} to 0x{MAX:x}")
-value = find_value(RESULT, OFFSET, TOP6, MAX)
-if value is not None:
-    print(f"Address: 0x{value:x} Value 0x{value+OFFSET:x}")
-else:
-    print("No valid VALUE found.")
-```
-
-```bash
-$ python3 solve.py
-Searching from 0x555555000000 to 0x555555ffffff
-Address: 0x555555559ae0 Value 0x555555559ac0
+print(hex(result)) # => 0x5ceaf258aac0
 ```
 
 ## General libc addresses
