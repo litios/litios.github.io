@@ -210,7 +210,8 @@ We know:
 With this information, we can assume that, when we `REVEAL_PTR` the operation is as follows:
 
 > I will use letters to better ilustrate the concept
-
+> 
+```
 PTR_ADDRESS: 0xAAABBBCCCDDD
 VALUE:       0xAAABBBCCCDEE
 
@@ -218,6 +219,7 @@ VALUE:       0xAAABBBCCCDEE
     | AAABBBCCCDEE|
 XOR-|-------------|------
       5cef3cf78f4a
+```
 
 The trick here is, since we know the first one and a half bytes, we can decipher the next one and a half, as we can reuse the previous ones we know to decypher it:
 
