@@ -66,7 +66,7 @@ tags:
 
 ## Introduction
 
-I was playing a CTF a couple weekends ago and I stumble upon this heap-style challenge that was linked to a modern libc. This was my first time dealing with modern libc versions, so naturally I stumbled upon a couple new (to me) protections.
+I was playing a CTF a couple weekends ago and I stumbled upon this heap-style challenge that was linked to a "modern" libc. This was my first time dealing with modern libc versions, so naturally I faced a couple new (to me) protections.
 
 Unfortunately, I couldn't finish the challenge in time and that spiked my curiosity about them.
 
@@ -149,7 +149,7 @@ I'm sure you noticed the different value in `tcachebins[0x30][1/2]` and this is 
 All we need to do is shift the bytes back to obtain the base of the heap! `0x555555559` -> `0x555555559000`.
 This is not always 100% true, if the chunk sits in a different page then that's what we will retrieve. Nevertheless, doing the math to figure out where the chunk is compared to the beginning of the heap shouldn't be too hard, if controlling the allocations.
 
-With this information, preparing our own pointers is just a matter of keeping track where our chunk will live. Since we only care about the page address, we only need to worry when our chunk is placed in a new page, to properly increase the heap leak.
+With this information, preparing our own pointers is just a matter of keeping track where our chunk will live. Since we only care about the page address, we only need to worry about increasing the leak if our chunk is placed in a new page.
 
 Following the example before, and for the sake of showing how it works, let's say we want to write in the stack, at `0x7ffffffde100`.
 
@@ -260,7 +260,7 @@ print(hex(result)) # => 0x5ceaf258aac0
 
 ## General libc addresses
 
-Pointer mangling is used to obfuscate dynamic pointers used by some libc functions. This is handled in libc by the macros `PTR_DEMANGLE` and `PTR_MANGLE`. These were introduced a long time ago, commit [3467f5c369a10ef19c8df38fb282c7763f36d66f](https://sourceware.org/git/?p=glibc.git;a=commit;h=3467f5c369a10ef19c8df38fb282c7763f36d66f) introduced the mangling operations for i386 and x86_64 on Dec 2025. Other commits followed up to use these macros roughly at the same time, like [a3c88553729c1c4dcd4f893a96b4668bce640ee5](https://sourceware.org/git/?p=glibc.git;a=commit;h=a3c88553729c1c4dcd4f893a96b4668bce640ee5) or [915a6c51c5d8127e87ef797ee23e04e4f92b4c4f](https://sourceware.org/git/?p=glibc.git;a=commit;h=915a6c51c5d8127e87ef797ee23e04e4f92b4c4f).
+Pointer mangling is used to obfuscate dynamic pointers stored in memory that are used by some libc functions. This is handled in libc by the macros `PTR_DEMANGLE` and `PTR_MANGLE`. They were introduced a long time ago, commit [3467f5c369a10ef19c8df38fb282c7763f36d66f](https://sourceware.org/git/?p=glibc.git;a=commit;h=3467f5c369a10ef19c8df38fb282c7763f36d66f) introduced the mangling operations for i386 and x86_64 on Dec 2005. Other commits followed up to use these macros roughly at the same time, like [a3c88553729c1c4dcd4f893a96b4668bce640ee5](https://sourceware.org/git/?p=glibc.git;a=commit;h=a3c88553729c1c4dcd4f893a96b4668bce640ee5) or [915a6c51c5d8127e87ef797ee23e04e4f92b4c4f](https://sourceware.org/git/?p=glibc.git;a=commit;h=915a6c51c5d8127e87ef797ee23e04e4f92b4c4f).
 
 This approach basically aims to defend those addresses that are initially written in memory by libc functions and will later be used again by other libc functions.
 
