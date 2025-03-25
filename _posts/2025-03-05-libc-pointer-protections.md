@@ -210,7 +210,7 @@ We know:
 With this information, we can assume that, when we `REVEAL_PTR` the operation is as follows:
 
 > I will use letters to better ilustrate the concept
-> 
+
 ```
 PTR_ADDRESS: 0xAAABBBCCCDDD
 VALUE:       0xAAABBBCCCDEE
