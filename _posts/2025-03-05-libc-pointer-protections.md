@@ -224,8 +224,11 @@ XOR-|-------------|------
 The trick here is, since we know the first one and a half bytes, we can decipher the next one and a half, as we can reuse the previous ones we know to decypher it:
 
 `AAA` -> we know it is `0x5ce`
+
 `AAA XOR BBB = 0xf3c` => `0xf3c XOR AAA = BBB` => `0xf3c XOR 0x5ce` => `0xaf2`
+
 `BBB XOR CCC = 0xf78` => `0xaf2 XOR BBB = CCC` => `0xaf2 XOR 0xf78` => `0x58a`
+
 `CCC XOR DEE = 0xf4a` => `0x58a XOR CCC = DEE` => `0x58a XOR 0xf4a` => `0xac0`
 
 With `0x5ceaf258aac0` we would have enough, as we only need `0x5ceaf258a` to obfuscate any further pointers we want. Either way, we can compute the original address by adding the known offset, `0x20`.
