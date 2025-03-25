@@ -8,6 +8,8 @@ entries:
         url: https://github.com/strukturag/libde265/issues/418
 
   research:
+      - title: Libc pointer protections
+        url: "/2025/03/05/libc-pointer-protections.html"
       - title: A technical deep-dive into x86_64 Ret2dlResolve
         url: "/2024/05/11/ret2dlresolve.html"
       - title: Look mum, I'm the GitHub Runner

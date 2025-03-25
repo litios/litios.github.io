@@ -7,8 +7,19 @@ tags:
   - Userspace
   - Exploitation
 --- 
-
-<pre style="font-size: 0.9vw; text-align: center">
+<pre style="font-size: clamp(0.17rem, 0.4vw, 1rem); text-align: center">
+ ██▀███  ▓█████ ▄▄▄█████▓   ▓█████▄  ██▓        ██▀███  ▓█████   ██████  ▒█████   ██▓     ██▒   █▓▓█████ 
+▓██ ▒ ██▒▓█   ▀ ▓  ██▒ ▓▒   ▒██▀ ██▌▓██▒       ▓██ ▒ ██▒▓█   ▀ ▒██    ▒ ▒██▒  ██▒▓██▒    ▓██░   █▒▓█   ▀ 
+▓██ ░▄█ ▒▒███   ▒ ▓██░ ▒░   ░██   █▌▒██░       ▓██ ░▄█ ▒▒███   ░ ▓██▄   ▒██░  ██▒▒██░     ▓██  █▒░▒███   
+▒██▀▀█▄  ▒▓█  ▄ ░ ▓██▓ ░    ░▓█▄   ▌▒██░       ▒██▀▀█▄  ▒▓█  ▄   ▒   ██▒▒██   ██░▒██░      ▒██ █░░▒▓█  ▄ 
+░██▓ ▒██▒░▒████▒  ▒██▒ ░    ░▒████▓ ░██████▒   ░██▓ ▒██▒░▒████▒▒██████▒▒░ ████▓▒░░██████▒   ▒▀█░  ░▒████▒
+░ ▒▓ ░▒▓░░░ ▒░ ░  ▒ ░░       ▒▒▓  ▒ ░ ▒░▓  ░   ░ ▒▓ ░▒▓░░░ ▒░ ░▒ ▒▓▒ ▒ ░░ ▒░▒░▒░ ░ ▒░▓  ░   ░ ▐░  ░░ ▒░ ░
+  ░▒ ░ ▒░ ░ ░  ░    ░        ░ ▒  ▒ ░ ░ ▒  ░     ░▒ ░ ▒░ ░ ░  ░░ ░▒  ░ ░  ░ ▒ ▒░ ░ ░ ▒  ░   ░ ░░   ░ ░  ░
+  ░░   ░    ░     ░          ░ ░  ░   ░ ░        ░░   ░    ░   ░  ░  ░  ░ ░ ░ ▒    ░ ░        ░░     ░   
+   ░        ░  ░               ░        ░  ░      ░        ░  ░      ░      ░ ░      ░  ░      ░     ░  ░
+                             ░                                                                ░          
+</pre>
+<pre style="font-size: 0.6vw; text-align: center">
                                                                                                                                
                           .   *.#@ **./@@  %                              (%*@  %, %..@ @                     
                         @% *.@..,,,,@@ .# %, .                      @. * #..,,,,....*/**%%                      
@@ -89,8 +100,7 @@ The flow that depicts how this happens is presented in the following diagram:
 
 Let's see what's going on with a simple program that calls 2 functions:
 
-```C
-
+```c
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -112,7 +122,7 @@ Now, let's fire gdb and see the result:
 1. Function `main` calls `gets` and `puts` functions. This is translated as a call to the PLT entry for `gets` `gets@plt` and `puts` `puts@plt`:
 
     
-```asm
+```c
     gef➤  disass main
    0x0000000000401163 <+0>:	endbr64
    0x0000000000401167 <+4>:	push   rbp
@@ -136,7 +146,7 @@ Now, let's fire gdb and see the result:
 2. Function `gets@plt` consists of:
 
 
-```asm
+```c
 gef➤  disass 0x401060
 Dump of assembler code for function gets@plt:
    0x0000000000401060 <+0>: endbr64 
@@ -146,7 +156,7 @@ Dump of assembler code for function gets@plt:
 
 3. Function `puts@plt` consists of:
 
-```asm
+```c
 gef➤  disass 0x401050
 Dump of assembler code for function puts@plt:
    0x0000000000401050 <+0>: endbr64 
@@ -179,7 +189,7 @@ This structure contains two fields:
 > If curious, other relocation types can be found at: `/arch/x86/include/asm/elf.h` in the Linux kernel source code.
 
 We can conveniently retrieve those values with `readelf -r test`
-```asm
+```c
 Relocation section '.rela.plt' at offset 0x500 contains
 
   Offset          Info           Type           Sym. Value    Sym. Name + Addend
@@ -197,7 +207,7 @@ and then inspecting the memory addresses.
 
 4. If we check the memory values of `r_offset` we can see:
 
-```asm
+```c
 gef➤  x/2wx 0x404020
 0x404020 <gets@got.plt>: 0x00401040 0x00000000
 gef➤  x/2wx 0x404018
@@ -206,7 +216,7 @@ gef➤  x/2wx 0x404018
 
 And those point to:
 
-```asm
+```c
 gef➤  x/3i 0x00401030
    0x401030: endbr64 
    0x401034: push   0x0
@@ -529,7 +539,7 @@ So you probably realized at this point that there is no more code after this. We
 The reason it works is because, if you remember, we set Elf64_Rel entry to point to `gets`. This means when `gets` is executed
 later on again it won't call `gets` but `system`.
 
-```python
+```c
    0x000000000040117e <+27>:	lea    rax,[rbp-0x10]
    0x0000000000401182 <+31>:	mov    rdi,rax
    0x0000000000401185 <+34>:	mov    eax,0x0

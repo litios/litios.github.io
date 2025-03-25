@@ -54,6 +54,12 @@ body {
     "wdth" 100;
 }
 
+.post-title {
+  text-align: center;
+  font-size: clamp(0.5rem, 2vw, 1.3rem);
+  font-family: "VT323", monospace;
+}
+
 .title {
   font-size: clamp(0.5rem, 1.2vw, 1.3rem);
 }
@@ -137,20 +143,24 @@ table, th, td {
   padding: 0.4rem;
 }
 
-//code {
-//  color: white;
-//  background-color: black;
-//}
+code.language-plaintext {
+ color: white;
+ background-color: rgb(53, 53, 53);
+ color:#f7bf23;
+ padding: 3px;
+ border-radius: 3px;
+}
 
 div.highlighter-rouge code {
   display: block;
   overflow-x: auto;
   padding: 1rem;
+  background-color: auto;
 }
 
 blockquote {
   font-style: italic;
-  border: thin solid black;
+  border: thin dashed #f7bf238c;
   padding: 1rem;
 
   p { margin: 0; }
