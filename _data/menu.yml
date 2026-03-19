@@ -8,6 +8,8 @@ entries:
         url: https://github.com/strukturag/libde265/issues/418
 
   research:
+      - title: Reliving the nightmare
+        url: "/2026/03/19/reliving-the-nightmare.html"
       - title: Libc pointer protections
         url: "/2025/03/05/libc-pointer-protections.html"
       - title: A technical deep-dive into x86_64 Ret2dlResolve
