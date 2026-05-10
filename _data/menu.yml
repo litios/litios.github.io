@@ -8,6 +8,8 @@ entries:
         url: https://github.com/strukturag/libde265/issues/418
 
   research:
+      - title: Copy2Libc - CopyFail analysis for container escape
+        url: "/2026/05/10/copyfail-containers.html"
       - title: Reliving the nightmare
         url: "/2026/03/19/reliving-the-nightmare.html"
       - title: Libc pointer protections
