@@ -473,7 +473,9 @@ So we will:
 
 And that's it! The attacker executes the script, corrupts the `libc.so.6` page cache pages (that the target also shares) so when the target container does the next `read`, it executes our code.
 
-<video src="/./assets/videos/copyfail-container-libc.webm" autoplay muted controls></video>
+<video src="/./assets/videos/copyfail-containers-libc.webm" autoplay muted controls></video>
+
+> There are some typos printed by the script that I fixed later, ignore the last 2 lines printed by the script
 
 ### Bonus: kamikaze libc approach
 
