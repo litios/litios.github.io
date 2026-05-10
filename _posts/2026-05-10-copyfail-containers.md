@@ -73,11 +73,11 @@ We have 2 variants of the exploit:
 * Those that target an SUID binary (so we can corrupt the ELF with our own shellcode/ELF) so when we execute them, they will run as `root` (if that's the owner of the file) but will run our own code that may just do `setuid(0); system("/bin/bash")`, for example.
 * Those that target a file that is used by another application and will give us root. For example, we can corrupt `/etc/passwd` first line, removing the need for a password when login as root. That is, from `root:x:0:0:root:/root:/bin/bash` to `root::0:0:root:/root:/bin/bash` (remove the x)
 
-And obviosuly we could target any other file or binary in the system to do other things apart from privilege escalation but that's not what I wanted to talk about today.
+And obviously we could target any other file or binary in the system to do other things apart from privilege escalation but that's not what I wanted to talk about today.
 
 ## CopyFail and containers
 
-When reading the end of [the original CopyFail writeup](https://xint.io/blog/copy-fail-linux-distributions) they mentioned a future blog about containers and the question instantly poped in my mind:
+When reading the end of [the original CopyFail writeup](https://xint.io/blog/copy-fail-linux-distributions) they mentioned a future blog about containers and the question instantly popped in my mind:
 
 > If I'm on a container, what can I use CopyFail for?
 
@@ -86,7 +86,7 @@ If we are in a container, we can use CopyFail to escalate to root in the contain
 The obvious way would be if a privilege container is executing a binary we get access to (like bind-mounted) so we can 'CopyFail' it and when the privileged container executes it runs our code.
 But that's not a realistic scenario. So how can this be used in a more normal scenario?
 
-## Overlayfs: The ilusion of isolation
+## Overlayfs: The illusion of isolation
 
 [This blog](https://retr0.zip/blog/cve-2026-31431-copy-fail.html) already glances at the idea that 3 container may access the same file. And if you are like me, probably one of the first things you did when read about containers is check if a public exploit/concept exists for container escape. And [there is one](https://github.com/Percivalll/Copy-Fail-CVE-2026-31431-Kubernetes-PoC) that provides an approach.
 
@@ -178,7 +178,7 @@ root@89d5c9ad8667:/home/ubuntu# ls -li /etc/shadow
 10884296 -rw-r----- 1 root shadow 502 Feb 10 14:12 /etc/shadow
 ```
 
-If we modify the file in one container, that one gets it's own file (from inside the container, you don't see the change in inode number)
+If we modify the file in one container, that one gets its own file (from inside the container, you don't see the change in inode number)
 
 ```bash
 # img1
@@ -335,7 +335,7 @@ As you can see, we basically corrupted the process since it probably tried to ex
 
 Going back to `libc`, for a real attack we have 2 options:
 1. Get the `libc` binary, patch it with our shellcode in a specific function and only overwrite that part of the file (cache page). Requires carefully crafted modifications, version dependent.
-2. Place our code at `libc` bootstrap and corrupt the rest of the size of `libc` so the process crashes and once the container restart it executes our payload on startup.
+2. Place our code at `libc` bootstrap and corrupt the rest of the size of `libc` so the process crashes and once the container restarts, it executes our payload on startup.
 
 I will go over `1` because it's more fun (but I will also provide the approach for 2 to show that it works too)
 
@@ -460,9 +460,9 @@ We will use `lief` to manipulate the ELF and `pwntools` to compile the assembly 
 
 So we will:
 * Load the actual libc.so.6 from the system.
-* Get `svcraw_getargs` and `recv` offsets so we know where to write.
-* Add our specific code into `svcraw_getargs`.`
-* Add a trampoline in `recv` so it executes our code that we wrote into `svcraw_getargs`
+* Get `svcraw_getargs` and `read` offsets so we know where to write.
+* Add our specific code into `svcraw_getargs`.
+* Add a trampoline in `read` so it executes our code that we wrote into `svcraw_getargs`
 * Use CopyFail technique to write our shellcode in the specific offsets into the system `libc.so.6`.
 
 > I actually added a couple more steps so I could create a local copy of libc called `libc-patched.so.6` so I could independently:
@@ -477,7 +477,7 @@ And that's it! The attacker executes the script, corrupts the `libc.so.6` page c
 
 ### Bonus: kamikaze libc approach
 
-Like I mentioned, there is another way of doing this. We can just write our code in a function that `libc` executes on start (like `__libc_start_main`) and corrupt the rest of libc so the container crashes when it tries to run any oher function and, on reboot, executes our code.
+Like I mentioned, there is another way of doing this. We can just write our code in a function that `libc` executes on start (like `__libc_start_main`) and corrupt the rest of libc so the container crashes when it tries to run any other function and, on reboot, executes our code.
 
 This obviously has the side effect or making all containers running this `libc.so.6` unable to do anything, crashing in a forever loop. Prepare to reboot if you plan to do this!
 
@@ -487,9 +487,9 @@ This obviously has the side effect or making all containers running this `libc.s
 
 ## Final notes
 
-The proof of concept here shows how an attacker could use CopyFail in container environments. While the target was a privileged container and container escape, the overall impact is that every container image that shares the same bottmo layer (`FROM`) will be affected by the attack, which could be especially harmful for accessing information from other workloads.
+The proof of concept here shows how an attacker could use CopyFail in container environments. While the target was a privileged container and container escape, the overall impact is that every container image that shares the same bottom layer (`FROM`) will be affected by the attack, which could be especially harmful for accessing information from other workloads.
 
-Realistically, the chances of an attacker having access to a container which base is the exact same as another privileged container is probably low, but not zero. If the attacker can select the image to load, then the attack becomes much easier, but still there is no way to figure out what other container images are being ran (especially, what versions). If the attacker could craft the image then the attack becomes trivial, as explained in the public exploit available.
+Realistically, the chances of an attacker having access to a container which base is the exact same as another privileged container is probably low, but not zero. If the attacker can select the image to load, then the attack becomes much easier, but still there is no way to figure out what other container images are being run (especially, what versions). If the attacker could craft the image then the attack becomes trivial, as explained in the public exploit available.
 
 In general, the obvious impact is the cross-container vector since that, at least, allows us access to all other containers running the same image, and others with the same base.
 
