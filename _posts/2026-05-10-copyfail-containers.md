@@ -1,4 +1,66 @@
-# Corrupt the core, corrupt them all: CopyFail analysis for container escape
+---
+layout: post
+title: Copy2Libc: CopyFail analysis for container escape
+date: 2026-05-10
+classes: wide
+tags:
+  - Research
+  - Exploitation
+--- 
+<pre style="font-size: clamp(0.17rem, 0.4vw, 1rem); text-align: center">
+ ▄████▄   ▒█████   ██▓███ ▓██   ██▓ ▄█████▄  ██▓     ██▓ ▄▄▄▄    ▄████▄  
+▒██▀ ▀█  ▒██▒  ██▒▓██░  ██▒▒██  ██▒      ██▒▓██▒    ▓██▒▓█████▄ ▒██▀ ▀█  
+▒▓█    ▄ ▒██░  ██▒▓██░ ██▓▒ ▒██ ██░   ▄███▒ ▒██░    ▒██▒▒██▒ ▄██▒▓█    ▄ 
+▒▓▓▄ ▄██▒▒██   ██░▒██▄█▓▒ ▒ ░ ▐██▓░ ▄██▒░   ▒██░    ░██░▒██░█▀  ▒▓▓▄ ▄██▒
+▒ ▓███▀ ░░ ████▓▒░▒██▒ ░  ░ ░ ██▒▓░▒████████░██████▒░██░░▓█  ▀█▓▒ ▓███▀ ░
+░ ░▒ ▒  ░░ ▒░▒░▒░ ▒▓▒░ ░  ░  ██▒▒▒ ░░░░░░░░░░ ▒░▓  ░░▓  ░▒▓███▀▒░ ░▒ ▒  ░
+  ░  ▒     ░ ▒ ▒░ ░▒ ░     ▓██ ░▒░   ░  ░░  ░ ░ ▒  ░ ▒ ░▒░▒   ░   ░  ▒   
+░        ░ ░ ░ ▒  ░░       ▒ ▒ ░░  ░          ░ ░    ▒ ░ ░    ░ ░        
+░ ░          ░ ░           ░ ░     ░ ░          ░  ░ ░   ░      ░ ░      
+░                          ░ ░     ░                          ░ ░
+</pre>
+<pre style="font-size: 0.6vw; text-align: center">
+
+                               ......................                               
+                           ..............................                           
+                        ....................................                        
+                     ..........................................                     
+                   ..............................................                   
+                 .......................::::.......................                 
+                .................-++************++-.................                
+              ................=**********************=:...............              
+             ..............-+***************************-..............             
+            .............:********************************-.............            
+           .............+**********************************+.............           
+           ...........:**************************************:...........           
+          ...........:+**************##########**************+:...........          
+         ............*************################*************............         
+         ...........+************##################************+...........         
+         ..........:************####################************:...........        
+        ...........-***********######################***********=...........        
+        ...........=***********######################***********+...........        
+        ...........=***********######################***********+...........        
+        ...........=***********######################***********=...........        
+         ..........:************####################************:...........        
+         ...........+************##################************+...........         
+         ............*************################*************............         
+          ...........:+**************##########***************-...........          
+           ...........-**************************************-...........           
+           .............+**********************************+.............           
+            .............=********************************=.............            
+             ..............=****************************=..............             
+              ...............:+**********************+:...............              
+                .................=+**************+=:................                
+                 .....................:::--:::.....................                 
+                   ..............................................                   
+                     ..........................................                     
+                       ......................................                       
+                           ..............................                           
+                               ......................                               
+       
+</pre>
+
+# Copy2Libc: CopyFail analysis for container escape
 
 I, like probably most of the cybersec industry, spent the last week around [CopyFail](https://copy.fail/) (and [DirtyFrag](https://github.com/V4bel/dirtyfrag)).
 
@@ -41,6 +103,7 @@ Container layers allow for a way to reuse space and make images more efficient o
 Imagine we have 2 images:
 
 > Image 1
+
 ```Dockerfile
 FROM ubuntu:24.04
 
@@ -50,6 +113,7 @@ ENTRYPOINT ["/bin/bash"]
 ```
 
 > Image 2
+
 ```Dockerfile
 FROM ubuntu:24.04
 
@@ -177,9 +241,9 @@ Is there another way?
 
 Now the binary approach is great, but there is another way. Almost all applications on the container, unless statically linked, will use `libc` for all basic operations.
 
-`libc` (or `musl`, in Alpine images for example) will most likely come from the base layer that provides most of the rootfs, that usually is the distro-based image (`ubuntu`, `debian`, `alpine`, etc). This means that even in images with 1000 layers that may change almost everything in the container image, `libc` is still probably coming from the base image.
+`libc` will most likely come from the base layer that provides most of the rootfs, that usually is the distro-based image (`ubuntu`, `debian`, `alpine`, etc). This means that even in images with 1000 layers that may change almost everything in the container image, `libc` is still probably coming from the base image.
 
-This makes it a specially great target because:
+It makes it a specially great target because:
 * It's always readable.
 * It will be shared across multiple container images.
 * It's most likely never going to be modified, meaning is always pointing to the `lowerdir` file.
@@ -187,7 +251,7 @@ This makes it a specially great target because:
 
 This is where things get tricky. Changing libc (or any running binary) will basically change the memory instructions of any running process too, the mapped `libc` running in the process. Replacing the whole libc binary will most likely corrupt the process, crash the container and reboot.
 
-This is not necessarily bad because, Kubernetes will restart the container and by the time it starts again, it will pick our "corrupted" libc and execute our code on startup (_you can also technically target any running process binary, but then that binary is probably not accessible from your attacker container_).
+It is not necessarily bad because, Kubernetes will restart the container and by the time it starts again, it will pick our "corrupted" libc and execute our code on startup (_you can also technically target any running process binary, but then that binary is probably not accessible from your attacker container_).
 
 For demo purposes, let's see this idea first with a simpler scenario. Let's reuse the `img1` `img2` containers from before and target `tail`. This will just override the whole `tail` binary with `A`s. `img2` container will be running it and this write will basically corrupt the process.
 
@@ -270,15 +334,16 @@ Segmentation fault (core dumped)
 As you can see, we basically corrupted the process since it probably tried to execute from an area that all it had now was `A`s. 
 
 Going back to `libc`, for a real attack we have 2 options:
-1. Get the `libc` binary, patch it with our shellcode in a specific function and only overwrite that part of the file (cache page). Requires carefully crafted modifications.
-2. Create our own small library and corrupt the rest of the size of `libc` so the process crashes and once the container restart it executes our payload on startup.
+1. Get the `libc` binary, patch it with our shellcode in a specific function and only overwrite that part of the file (cache page). Requires carefully crafted modifications, version dependent.
+2. Place our code at `libc` bootstrap and corrupt the rest of the size of `libc` so the process crashes and once the container restart it executes our payload on startup.
 
-I will go over 1 because it's more fun but I will also provide the approach for 2 to show that it works too.
+I will go over `1` because it's more fun (but I will also provide the approach for 2 to show that it works too)
 
 ## LIBC-based attack
 
 > I will use a minikube environment for the demo
-> Full code in: https://github.com/litios/xpls/copyfail-containers/
+>
+> Full code in: https://github.com/litios/xpls/tree/main/copyfail-containers
 
 Let's build 2 sample images:
 
@@ -375,7 +440,7 @@ filename:
     .ascii "/host/pwned\0"
 ```
 
-For the place to write our shellcode, I chose `svcraw_getargs` because in my python3 example is a function that is never going to be executed. Depending on your target, this may need to be tweaked. This is not exported so I used gdb to find the address and hardcoded it (for ubuntu 24.04 image):
+For the place to write our shellcode, I chose `svcraw_getargs` because, in my python3 example, it's a function that is never going to be executed. Depending on your target, this may need to be tweaked. The function is not exported so I used gdb to find the address and hardcoded it (for ubuntu 24.04 image):
 
 ```python
 func_va = 0x000000000016e220 # because symbol.value is undeclared
@@ -396,23 +461,38 @@ We will use `lief` to manipulate the ELF and `pwntools` to compile the assembly 
 So we will:
 * Load the actual libc.so.6 from the system.
 * Get `svcraw_getargs` and `recv` offsets so we know where to write.
-* Compile our assembly for both functions.
-* Use CopyFail to write our shellcode in the specific offsets into the system `libc.so.6`.
+* Add our specific code into `svcraw_getargs`.`
+* Add a trampoline in `recv` so it executes our code that we wrote into `svcraw_getargs`
+* Use CopyFail technique to write our shellcode in the specific offsets into the system `libc.so.6`.
 
 > I actually added a couple more steps so I could create a local copy of libc called `libc-patched.so.6` so I could independently:
 > * Create the libc patched version.
 > * Use CopyFail to replace from any patched libc file.
 >
-> This is not necessary and you can just do the steps above, but it helped with understanding and working on it so I decided to leave it.
+> This is not necessary and you can just do the steps above, but it helped with understanding and working on it so I decided to leave it. This is for demo purposes after all :)
 
-And that's it! The attacker executes the script, corrupts the `libc.so.6` from the system that the target also shares and when it does the next `read` it executes our code.
+And that's it! The attacker executes the script, corrupts the `libc.so.6` page cache pages (that the target also shares) so when the target container does the next `read`, it executes our code.
 
-<video src="/./assets/videos/copyfail-container-libc.webm" autoplay muted>
+<video src="/./assets/videos/copyfail-container-libc.webm" autoplay muted controls/>
 
-# Bonus: kamikaze libc approach
+### Bonus: kamikaze libc approach
 
 Like I mentioned, there is another way of doing this. We can just write our code in a function that `libc` executes on start (like `__libc_start_main`) and corrupt the rest of libc so the container crashes when it tries to run any oher function and, on reboot, executes our code.
 
+This obviously has the side effect or making all containers running this `libc.so.6` unable to do anything, crashing in a forever loop. Prepare to reboot if you plan to do this!
+
 > Script available as copyfail-libc-libc-start.py
 
-<video src="/./assets/videos/copyfail-container-libc-kamikaze.webm" autoplay muted>
+<video src="/./assets/videos/copyfail-container-libc-kamikaze.webm" autoplay muted controls/>
+
+## Final notes
+
+The proof of concept here shows how an attacker could use CopyFail in container environments. While the target was a privileged container and container escape, the overall impact is that every container image that shares the same bottmo layer (`FROM`) will be affected by the attack, which could be especially harmful for accessing information from other workloads.
+
+Realistically, the chances of an attacker having access to a container which base is the exact same as another privileged container is probably low, but not zero. If the attacker can select the image to load, then the attack becomes much easier, but still there is no way to figure out what other container images are being ran (especially, what versions). If the attacker could craft the image then the attack becomes trivial, as explained in the public exploit available.
+
+In general, the obvious impact is the cross-container vector since that, at least, allows us access to all other containers running the same image, and others with the same base.
+
+If you haven't, go patch your servers! And thanks for reading.
+
+`echo 'install algif_aead /bin/false' > /etc/modprobe.d/disable-algif_aead.conf`
