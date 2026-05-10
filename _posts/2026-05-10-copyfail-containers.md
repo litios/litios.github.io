@@ -475,8 +475,6 @@ And that's it! The attacker executes the script, corrupts the `libc.so.6` page c
 
 <video src="/./assets/videos/copyfail-containers-libc.webm" autoplay muted controls></video>
 
-> There are some typos printed by the script that I fixed later, ignore the last 2 lines printed by the script
-
 ### Bonus: kamikaze libc approach
 
 Like I mentioned, there is another way of doing this. We can just write our code in a function that `libc` executes on start (like `__libc_start_main`) and corrupt the rest of libc so the container crashes when it tries to run any other function and, on reboot, executes our code.
