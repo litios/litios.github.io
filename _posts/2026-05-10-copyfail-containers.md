@@ -473,7 +473,7 @@ So we will:
 
 And that's it! The attacker executes the script, corrupts the `libc.so.6` page cache pages (that the target also shares) so when the target container does the next `read`, it executes our code.
 
-<video src="/./assets/videos/copyfail-container-libc.webm" autoplay muted controls/>
+<video src="/./assets/videos/copyfail-container-libc.webm" autoplay muted controls></video>
 
 ### Bonus: kamikaze libc approach
 
@@ -483,7 +483,7 @@ This obviously has the side effect or making all containers running this `libc.s
 
 > Script available as copyfail-libc-libc-start.py
 
-<video src="/./assets/videos/copyfail-container-libc-kamikaze.webm" autoplay muted controls/>
+<video src="/./assets/videos/copyfail-container-libc-kamikaze.webm" autoplay muted controls></video>
 
 ## Final notes
 
