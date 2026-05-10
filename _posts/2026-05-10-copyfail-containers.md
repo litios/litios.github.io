@@ -483,7 +483,7 @@ This obviously has the side effect or making all containers running this `libc.s
 
 > Script available as copyfail-libc-libc-start.py
 
-<video src="/./assets/videos/copyfail-container-libc-kamikaze.webm" autoplay muted controls></video>
+<video src="/./assets/videos/copyfail-containers-libc-kamikaze.webm" autoplay muted controls></video>
 
 ## Final notes
 
