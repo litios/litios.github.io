@@ -1,6 +1,6 @@
 ---
 layout: post
-title: Copy2Libc: CopyFail analysis for container escape
+title: Copy2Libc - CopyFail analysis for container escape
 date: 2026-05-10
 classes: wide
 tags:
